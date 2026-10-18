@@ -4,6 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>FLUSHING Demand Map</title>
+<meta name="description" content="FLUSHING: a free, open map that scores every New York City census block on where a new public restroom would help most, and picks sites. Prototype from the Impact Lab Modular Deployment team.">
+<meta property="og:title" content="FLUSHING Demand Map">
+<meta property="og:description" content="Where should New York's next public restrooms go? A free block-by-block demand map built on public data.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#22303d">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%2322303d'/%3E%3Crect x='6' y='20' width='4' height='6' fill='%23fde6cf'/%3E%3Crect x='11' y='16' width='4' height='10' fill='%23fbc08a'/%3E%3Crect x='16' y='12' width='4' height='14' fill='%23f08a4b'/%3E%3Crect x='21' y='7' width='4' height='19' fill='%23cf4f20'/%3E%3C/svg%3E">
 <style>
 /* Layout: letter rail on the left in F-L-U-S-H-I-N-G order; block map on the right with the headline numbers above it and the clicked block below. */
 :root {
@@ -1345,6 +1351,163 @@ table.mlist tbody tr:focus-visible {
     display: none;
   }
 }
+
+/* ---------- v4: tiers, thresholds, search, site check ---------- */
+.thtab {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13.5px;
+  margin-top: 10px;
+}
+.thtab th,
+.thtab td {
+  padding: 4px 3px;
+  text-align: left;
+  color: var(--rail-ink);
+  font-weight: 400;
+}
+.thtab th {
+  color: var(--rail-mut);
+  font-size: 12.5px;
+}
+.thtab td:first-child {
+  color: var(--rail-mut);
+  width: 34%;
+}
+.rail .thtab input[type="number"] {
+  padding: 4px 5px;
+  font-family: var(--mono);
+  font-size: 13px;
+}
+dl.defs {
+  margin: 8px 0 0;
+  font-size: 14px;
+  line-height: 1.45;
+}
+dl.defs dt {
+  font-weight: 600;
+  margin-top: 10px;
+}
+dl.defs dd {
+  margin: 2px 0 0;
+  color: var(--rail-mut);
+}
+ul.srcl {
+  margin: 8px 0 0;
+  padding-left: 18px;
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--rail-mut);
+}
+ul.srcl b {
+  color: var(--rail-ink);
+}
+.rail a {
+  color: #8fd0f5;
+}
+.find {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.find input {
+  flex: 1;
+  min-width: 200px;
+  font: inherit;
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  background: var(--panel);
+  color: var(--ink);
+}
+#qmsg {
+  margin: 6px 0 10px;
+  min-height: 1em;
+}
+.scen {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+  font-size: 14.5px;
+}
+.scen select {
+  font: inherit;
+  padding: 7px 8px;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  background: var(--panel);
+  color: var(--ink);
+}
+.scen .acc2 {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  cursor: pointer;
+}
+.sitecheck {
+  margin-top: 12px;
+  border-top: 1px solid var(--line);
+  padding-top: 10px;
+}
+ul.chk2 {
+  list-style: none;
+  padding: 0;
+  margin: 6px 0 8px;
+  font-size: 14.5px;
+  line-height: 1.5;
+}
+ul.chk2 li.no {
+  color: var(--no);
+}
+ul.chk2 li.vis {
+  color: var(--muted);
+}
+details.sec > summary {
+  list-style-position: inside;
+}
+details.edit {
+  margin-top: 10px;
+}
+details.edit > summary {
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--rail-ink);
+  list-style-position: inside;
+}
+.tbars {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 12px 0 16px;
+  max-width: 640px;
+}
+.tbar {
+  display: grid;
+  grid-template-columns: 250px 1fr 50px;
+  gap: 12px;
+  align-items: center;
+  font-size: 14.5px;
+}
+.tbar div {
+  background: var(--bg);
+  height: 18px;
+  border-radius: 3px;
+}
+.tbar i {
+  display: block;
+  height: 100%;
+  border-radius: 3px;
+}
+.tbar b {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+@media (max-width: 600px) {
+  .tbar {
+    grid-template-columns: 1fr;
+  }
+}
 </style>
 
 </head>
@@ -1361,15 +1524,25 @@ table.mlist tbody tr:focus-visible {
 <aside class="rail">
   <details class="step" id="step1" open><summary><span class="sn">1</span>Where are restrooms needed?</summary>
     <div><label class="dl" for="dist">District</label><select id="dist"></select><p class="dhint">* has a Throne restroom. More districts under "Districts and your own data" below.</p></div>
-    <p class="base">Each block is scored on one question: <b>if a restroom stood here, how many people a day would it serve who have none nearby?</b> Darker blocks score higher. Click any block to see why.</p>
-    <details class="sec sub"><summary>What goes into the score</summary><div id="letters"></div></details>
-    <details class="sec sub"><summary>Adjust assumptions</summary>
+    <p class="base">Each block is sorted into a <b>need tier</b>, the way DOT's Pedestrian Demand Map sorts streets: each factor sets a tier on its own, and the block takes the highest. Blocks with an open restroom within a 5-minute walk are <b>served</b>. Click any block to see why.</p>
+    <details class="sec sub"><summary>What sets the tier</summary><div id="letters"></div></details>
+    <details class="sec sub" id="thsec"><summary>Tier thresholds</summary>
+      <label class="row">Preset<select id="thpreset"><option value="dot">Default (DOT-style)</option><option value="equity">Equity first</option><option value="foot">Foot traffic first</option><option value="custom">Custom</option></select></label>
+      <details class="edit"><summary>Edit thresholds</summary><table class="thtab"><thead><tr><th>Tier starts at</th><th>2</th><th>3</th><th>4</th><th>5</th></tr></thead><tbody>
+      <tr><td>Subway entries a day (thousands)</td><td>–</td><td><input id="thsub3" type="number" step="5" value="20"></td><td><input id="thsub4" type="number" step="5" value="50"></td><td><input id="thsub5" type="number" step="5" value="100"></td></tr>
+      <tr><td>Vulnerable residents %</td><td><input id="thvul2" type="number" step="1" value="20"></td><td><input id="thvul3" type="number" step="1" value="25"></td><td><input id="thvul4" type="number" step="1" value="30"></td><td><input id="thvul5" type="number" step="1" value="35"></td></tr>
+      <tr><td>Poverty %</td><td><input id="thpov2" type="number" step="0.5" value="10"></td><td><input id="thpov3" type="number" step="0.5" value="15"></td><td><input id="thpov4" type="number" step="0.5" value="20"></td><td><input id="thpov5" type="number" step="0.5" value="30"></td></tr>
+      <tr><td>Complaints a year</td><td><input id="thc2" type="number" step="1" value="1"></td><td><input id="thc3" type="number" step="1" value="2"></td><td><input id="thc4" type="number" step="1" value="3"></td><td><input id="thc5" type="number" step="1" value="5"></td></tr>
+      </tbody></table></details>
+      <p>Most people can leave this on the default. Foot traffic follows DOT's street classes (Global 5, Regional 4, Neighborhood 3, Community 2, Baseline 1) and DOT's rule that a station with 50,000 daily riders makes a Regional corridor. Resident and poverty cut-offs are round numbers, the same in every district. "Equity first" lowers them; "Foot traffic first" caps them at tier 3. The 30-site list and the Throne check always use the default.</p>
+    </details>
+    <details class="sec sub"><summary>Walk and contract assumptions</summary>
     <label class="row">Share of passers-by who need a restroom (%)<input id="rate" type="number" min="0.1" max="10" step="0.1" value="1"></label>
     <label class="row">Uses one unit can serve per day<input id="cap" type="number" min="20" max="600" step="10" value="120"></label>
     <label class="row">Yearly cost per unit ($)<input id="cost" type="number" min="10000" max="1000000" step="5000" value="235000"></label>
     <label class="row">Walk standard (minutes)<input id="tmin" type="number" min="4" max="20" step="1" value="10"></label>
     <label class="row">Walking speed (metres a minute)<input id="speed" type="number" min="40" max="90" step="1" value="64"></label>
-    <p>The share is an assumption until the city publishes use counts for its Throne units. Capacity is set near the busiest of Long Beach's Throne units, which averaged 119 uses a day. Cost is the Throne pilot: $4M for 17 units for a year. Speed is set for a slower walker; a brisk adult is about 80.</p>
+    <p>The walk standard and speed decide who is served. The other three only estimate visits and cost for contracts; they do not change tiers. The share is an assumption until the city publishes Throne's New York use counts; the best public data are from Throne's Long Beach, California pilot, where the busiest unit averaged 119 uses a day. Cost is the Throne pilot: $4M for 17 units for a year, units and service together. Speed is set for a slower walker; a brisk adult is about 80.</p>
   </details>
     <details class="sec sub"><summary>Which restrooms count</summary>
     <div class="chk" id="ops"></div>
@@ -1381,14 +1554,39 @@ table.mlist tbody tr:focus-visible {
   </details>
   </details>
   <details class="step" id="step2" open><summary><span class="sn">2</span>Where can they go?</summary>
-    <p class="base">Choose the land a unit may stand on. Land never changes a block's need; it only decides where a unit is allowed.</p>
+    <p class="base">Choose the land a unit may stand on. Land never changes a block's tier; it only decides where a unit is allowed. Each candidate then gets a desk review modelled on DOT's siting steps: what the data can check, what needs a site visit, and who must approve.</p>
     <div id="landbox"></div>
   </details>
   <details class="step" id="step3" open><summary><span class="sn">3</span>Where should they go?</summary>
-    <p class="base">FLUSHING puts a unit on the highest-scoring allowed block, counts it as open, rescores every block and repeats, so units spread out instead of stacking up.</p>
+    <p class="base">FLUSHING puts a unit on the highest-tier allowed block (ties go to the most people on foot), counts it as open, re-sorts every block and repeats, so units spread out instead of stacking up. Each pick shows its site check and a suggested type of restroom.</p>
     <div class="picks"><label for="npick">Sites</label><select id="npick"><option>1</option><option>2</option><option selected>3</option><option>4</option><option>5</option><option>8</option></select><button class="btn pri" id="pick">Pick sites</button><button class="btn" id="clear" hidden>Clear</button></div>
-    <p class="base">Or see the memo's list: the top 30 sites across every loaded district.</p>
-    <div class="picks"><button class="btn" id="memo30">Show all 30 sites</button></div>
+    <p class="base">Or see the reference list in our memo: the next 30 sites to consider across the loaded districts, always on the default settings.</p>
+    <div class="picks"><button class="btn" id="memo30">Show the next 30 sites</button></div>
+  </details>
+
+  <details class="sec" id="terms"><summary>Key terms</summary>
+    <dl class="defs">
+      <dt>Need tier</dt><dd>1 to 5, with 5 the most need. Each factor sets a tier on its own; the block takes the highest, as in DOT's Pedestrian Demand Map. No weights are added up.</dd>
+      <dt>Served · partly served · gap</dt><dd>Served: an open restroom within a 5-minute walk; not ranked. Partly served: 5 to 10 minutes; the tier is lowered by one. Gap: beyond 10 minutes.</dd>
+      <dt>Deciding factor</dt><dd>The one factor that set the block's tier. Ties between blocks go to more people on foot, then more residents.</dd>
+      <dt>Foot traffic</dt><dd>DOT's five street classes (Global, Regional, Neighborhood, Community, Baseline), or a subway station within 150 m with many daily entries.</dd>
+      <dt>Vulnerable residents</dt><dd>Share of residents aged 65+, under 5, or under 65 with a disability (Census survey). A block within a 10-minute walk of a homeless drop-in centre counts as at least tier 4. Resident factors only count on blocks with 10 or more residents.</dd>
+      <dt>Poverty · complaints</dt><dd>Poverty rate (Census survey) and yearly 311 public-urination complaints within 200 m.</dd>
+      <dt>Walk</dt><dd>Straight-line distance × 1.3 for real streets, at 64 m a minute, a slower walker's pace.</dd>
+      <dt>Clear path</dt><dd>The open sidewalk left beside a unit. DOT asks for 8 ft, so a sidewalk unit needs about 15 ft. The tool checks the widest sidewalk on the block, not the exact spot.</dd>
+      <dt>Desk review · site visit</dt><dd>The tool checks what public data can show. Sun, curb uses, below-grade structures and lighting need someone on site.</dd>
+      <dt>Visits a day</dt><dd>1% of people on foot, up to 120, for people with no restroom nearby. Used for cleaning schedules and cost, never for ranking.</dd>
+    </dl>
+  </details>
+  <details class="sec" id="srcsec"><summary>Data and sources</summary>
+    <ul class="srcl">
+      <li><b>Restrooms:</b> NYC Public Restrooms (open data) and the 17 announced Throne units</li>
+      <li><b>Foot traffic:</b> DOT Pedestrian Mobility Plan street classes; MTA subway ridership</li>
+      <li><b>Residents:</b> 2020 Census blocks; Census survey (ACS) for age, disability and poverty</li>
+      <li><b>Complaints:</b> 311 service requests (public urination)</li>
+      <li><b>Land:</b> MapPLUTO tax lots, parks and plazas; sidewalk widths from city planimetrics</li>
+    </ul>
+    <p>Full list with links and dates: <a href="#sources" data-tab="sources">Sources</a>.</p>
   </details>
 
   <details class="sec" id="datasec"><summary>Districts and your own data</summary>
@@ -1402,21 +1600,24 @@ table.mlist tbody tr:focus-visible {
     <div class="btnrow"><button class="rbtn" id="badd" aria-pressed="false">Click the map to add</button><label class="rbtn" for="frest">Import points…</label><input class="file" type="file" id="frest" accept=".csv,.geojson,.json"></div>
     <p>Import a CSV with latitude and longitude columns, or GeoJSON points.</p>
     <h4>Save</h4>
-    <div class="btnrow"><button class="rbtn" id="xcsv">Scores (CSV)</button><button class="rbtn" id="xgeo">Scores (GeoJSON)</button><button class="rbtn" id="xpack">District pack</button><button class="rbtn" id="xtool">This tool, with my districts</button></div>
+    <div class="btnrow"><button class="rbtn" id="xcsv">Block results (CSV)</button><button class="rbtn" id="xgeo">Block results (GeoJSON)</button><button class="rbtn" id="xpack">District pack</button><button class="rbtn" id="xtool">This tool, with my districts</button></div>
     <h4>Update</h4>
     <div class="btnrow"><button class="rbtn" id="brest">Refresh restrooms</button></div>
     <p>Pulls the current Public Restrooms list for this district. Needs internet.</p>
     <div class="btnrow"><label class="rbtn" for="fpack">Load a district pack…</label><input class="file" type="file" id="fpack" accept=".json"><button class="rbtn" id="bdrop" hidden>Remove this district</button></div>
-    <p>Scores open in QGIS, ArcGIS or Excel. "This tool, with my districts" downloads a copy of this page with everything you added inside it.</p>
+    <p>Results open in QGIS, ArcGIS or Excel. "This tool, with my districts" downloads a copy of this page with everything you added inside it.</p>
   </details>
 </aside>
 
 <div class="main">
-  <div class="guide" id="guide"><div><b>New here?</b> 1. Pick a district. 2. Choose where a unit may stand. 3. Press <b>Pick sites</b>. Click any block to see its score in plain words.</div><button class="btn" id="gclose" aria-label="Hide this tip">Got it</button></div>
+  <div class="guide" id="guide"><div><b>New here?</b> 1. Pick a district. 2. Choose where a unit may stand. 3. Press <b>Pick sites</b>. Click any block to see its tier in plain words.</div><button class="btn" id="gclose" aria-label="Hide this tip">Got it</button></div>
   <div class="card"><div class="stat" id="stat"></div></div>
   <div class="card">
+    <div class="find"><input id="q" type="search" placeholder="Search an address or place in NYC" aria-label="Search an address or place"><button class="btn" id="qgo">Find</button><button class="btn" id="qme">Use my location</button></div>
+    <p class="small" id="qmsg" role="status" aria-live="polite"></p>
     <div class="bar2">
-      <div class="seg" role="group" aria-label="Map view"><button id="vNeed" aria-pressed="true">Need score</button><button id="vAccess" aria-pressed="false">Walk time</button></div><details class="layers" id="laydd"><summary>Layers</summary><div class="laylist" role="group" aria-label="Map layers">
+      <div class="seg" role="group" aria-label="Map view"><button id="vNeed" aria-pressed="true">Need tier</button><button id="vAccess" aria-pressed="false">Walk time</button></div>
+      <div class="scen"><label for="scen">Scenario</label><select id="scen"><option value="peak">Peak (default)</option><option value="win">Winter</option><option value="eve">Evening</option></select><label class="acc2"><input type="checkbox" id="acc2">Accessible restrooms only</label></div><details class="layers" id="laydd"><summary>Layers</summary><div class="laylist" role="group" aria-label="Map layers">
       <label><input type="checkbox" id="lyS" checked>Street names</label>
       <label><input type="checkbox" id="lyP" checked>Parks, plazas and stations</label>
       <label><input type="checkbox" id="lyF">Flood plain</label>
@@ -1432,76 +1633,88 @@ table.mlist tbody tr:focus-visible {
   </div>
   <div class="card" id="detail"></div>
   <div class="card" id="picks" hidden></div>
-  <div class="note"><b>Prototype.</b> Scores are rough estimates for exploring the idea, not for making siting decisions. The <a href="#method" data-tab="method">Method</a> page says how they are worked out; <a href="#unknowns" data-tab="unknowns">Unknowns</a> says what they miss.</div>
+  <div class="note"><b>Prototype.</b> Tiers are rough estimates for exploring the idea, not for making siting decisions. The <a href="#method" data-tab="method">Method</a> page says how they are worked out; <a href="#unknowns" data-tab="unknowns">Unknowns</a> says what they miss.</div>
 </div>
 </div>
 </section>
 
 <section id="tab-city" class="card doc" hidden>
 <h2>City view</h2>
-<p class="lead">Every built district at once, shaded by the same 0 to 5 gauge, for the bigger calls: which districts first, and how many units each. Numbers are community districts; * marks a Throne district.</p>
+<p class="lead">Every built district at once, shaded by the same need tiers (served, then 1 to 5), for the bigger calls: which districts first, and how many units each. Numbers are community districts; * marks a Throne district.</p>
 <p id="citySum"></p>
 <div class="legend" id="cityLegend"></div>
 <div class="citygrid" id="cityMaps"></div>
 <h3 class="sp">Districts ranked by residents out of reach</h3>
-<p>Click a district, in the table or on a map, to open it. Districts not built yet do not appear; add them on the Map page. Scores follow your settings.</p>
+<p>Click a district, in the table or on a map, to open it. Districts not built yet do not appear; add them on the Map page. Tiers follow your settings.</p>
 <div class="tw" id="cityTable"></div>
 </section>
 
 <section id="tab-about" class="card doc" hidden>
 <h2>About</h2>
 <p class="note" style="max-width:74ch"><b>This is a prototype sandbox.</b> It was built to test an idea and to be picked apart. The numbers are rough estimates. Nothing here should be used to choose a site without checking it on the ground.</p>
-<p class="lead">FLUSHING asks one question of every city block: <b>if a public restroom stood here, how many people a day would it serve who do not have one nearby?</b></p>
+<p class="lead">FLUSHING answers three questions for every city block: <b>where is a public restroom needed, where can one go, and where should it go?</b> It speeds up the desk-review stage of siting; site visits and agency approvals come after it.</p>
 <h3 class="sp">How to use it</h3>
 <ol>
-<li><b>Pick a district.</b> The list starts with Community District 1 in each borough, and the tool opens on Manhattan's, home to City Hall. Brooklyn CD 1 is built from open data the first time you open it.</li>
-<li><b>Look at the map.</b> "Walk access" shows who can reach a restroom today. "Need score" shows where a new one would help most.</li>
-<li><b>Click a block</b> to see how its score was worked out, line by line.</li>
-<li><b>Change something.</b> Switch a letter off, or edit an assumption, and the map recalculates.</li>
-<li><b>Press "Pick sites"</b> for suggested locations. The Method page explains each pick and what your settings changed.</li>
-<li><b>Add the rest of the city.</b> Under "Districts and your own data", build the other 42 community districts one by one (about a minute each, with internet), then save "This tool, with my districts" so the full city opens offline next time.</li>
+<li><b>Find a place.</b> Search an address, use your location, or pick a district. The list starts with Community District 1 in each borough.</li>
+<li><b>Read the map.</b> "Need tier" shades each block from served to tier 5. "Walk time" shows who can reach a restroom today.</li>
+<li><b>Click a block.</b> "What this means" says its tier, the factor that set it, and its site check. "Show the math" has every step.</li>
+<li><b>Try a scenario.</b> Winter, evening, accessible restrooms only, a different land choice, or other tier thresholds.</li>
+<li><b>Press "Pick sites"</b>, or "Show all 30 sites" for the list in our memo. Every pick still needs a site visit.</li>
+<li><b>Add the rest of the city</b> under "Districts and your own data" (about a minute each, with internet), then save "This tool, with my districts".</li>
 </ol>
 <h3 class="sp">What is inside</h3>
 <ul>
 <li><b>17 districts built in.</b> Six in Manhattan, four in the Bronx, four in Brooklyn, two in Queens and one in Staten Island. Fourteen are the districts where the city placed its 17 Throne restrooms (marked *), built in as a baseline to compare with; three have no Throne unit and are there for contrast: Lower Manhattan, Midtown and Mott Haven. Add them, or any of the other districts, under "Districts and your own data". Built-in ones appear at once; the rest take about a minute with internet.</li>
 <li><b>Any area you draw.</b> A boundary file of your own (GeoJSON or .shp), such as a council district or business improvement district, is built the same way.</li>
 <li><b>Your own restrooms.</b> Click the map to add one, import a list, or click an existing restroom to stop counting it.</li>
-<li><b>Exports.</b> Scores save as CSV or GeoJSON for QGIS, ArcGIS or Excel.</li>
+<li><b>Exports.</b> Block results save as CSV or GeoJSON for QGIS, ArcGIS or Excel.</li>
 </ul>
 <h3 class="sp">The ideas behind it</h3>
 <ul>
-<li>It counts people, so a score means the same thing in every neighbourhood.</li>
-<li>A block that already has a restroom nearby scores zero, however busy it is.</li>
-<li>Places where more people have greater need count for more.</li>
-<li>Every block shows its own arithmetic, every data source is listed, and what is not known is set out on the Unknowns page.</li>
+<li><b>Simple and explainable.</b> Like DOT's Pedestrian Demand Map, each block takes its highest single factor; nothing is weighted and summed.</li>
+<li><b>Access comes first.</b> A block with an open restroom within 5 minutes is served, however busy it is.</li>
+<li><b>Peak demand.</b> As DOT designs streets for peak use, tiers assume a typical busy day; winter and evening are optional tests.</li>
+<li><b>Desk review, then the ground.</b> Informed by city agency siting processes: physical checks, then approvals by DOT, Parks, MTA, City Hall, the Public Design Commission and community boards. The tool checks what data can show and lists the rest for a site visit.</li>
+<li><b>Every step is shown.</b> Each block shows its factors, every source is listed, and what is not known is on the Unknowns page.</li>
 </ul>
+<h3 class="sp">Related work</h3>
+<p><a href="https://eco-trans.github.io/Bathroom-Deserts/">Bathroom Deserts</a> maps how well New Yorkers can reach a usable restroom along walking routes, at different times of day and under different rules for who can get in. It measures access. FLUSHING asks a different question: where to add the next restroom, whether it can stand there, and what its contract should cover. The two can be read together.</p>
 <h3 class="sp">One file</h3>
 <p>The whole tool is this one HTML file, about 3 MB. It opens in any browser with no internet, login or installation. Internet is only needed to add a district that is not already inside.</p>
 </section>
 
 <section id="tab-method" class="card doc" hidden>
 <h2>Method</h2>
-<p class="lead">Each block gets a score in four steps.</p>
+<p class="lead">Each block gets a need tier in three steps, after DOT's Pedestrian Demand Map: each factor sets a tier on its own, and the block takes the highest.</p>
 <ol class="stepsgrid">
-<li><b>How many people would use it?</b>People on foot × the share who need a restroom, up to what one unit can serve in a day.</li>
-<li><b>How many have nowhere else to go?</b>None if a restroom is within easy reach. All of them beyond the walk standard. A share in between.</li>
-<li><b>How great is the need?</b>The count is raised where more residents are older, very young, disabled or poor, and near drop-in centres for people without homes.</li>
-<li><b>Score</b>The result, in need-weighted uses a day, is shown on a gauge from 0 to 5.</li>
+<li><b>Distance first.</b>An open restroom within a 5-minute walk: served, not ranked. 5 to 10 minutes: partly served, tier lowered by one. Beyond 10: a gap.</li>
+<li><b>Each factor sets a tier.</b>Foot traffic, vulnerable residents, poverty and public-urination complaints, each from 1 to 5 by the thresholds on the Map page.</li>
+<li><b>Highest tier wins.</b>The block takes its strongest factor, which is shown as the deciding factor. Nothing is weighted or added.</li>
 </ol>
-<p class="aside">Land and cost are kept out of the score. Land only limits where a unit can go. Cost is shown separately.</p>
-
-<h3 class="sp">Reading the gauge</h3>
-<p>5 is the most need and 1 the least. 0 means no gap. Each step is one fifth of what a unit can serve in a day, so the scale is the same in every district. The ranges below are need-weighted uses a day.</p>
+<p class="aside">Ties are broken by people on foot, then residents. Land and cost are kept out of the tier: land decides where a unit may stand, and visits and cost feed the contract.</p>
+<h3 class="sp">Reading the tiers</h3>
 <div class="gscale" id="gscale"></div>
+<h3 class="sp">Default thresholds</h3>
+<div class="tw"><table class="t"><thead><tr><th>Factor</th><th>Tier 1</th><th>2</th><th>3</th><th>4</th><th>5</th></tr></thead><tbody>
+<tr><td><b>Foot traffic</b>: DOT street class</td><td>Baseline</td><td>Community</td><td>Neighborhood</td><td>Regional</td><td>Global</td></tr>
+<tr><td><b>Foot traffic</b>: subway entries a day within 150 m</td><td>–</td><td>–</td><td>20,000</td><td>50,000 (DOT's Regional rule)</td><td>100,000</td></tr>
+<tr><td><b>Vulnerable residents</b>: share 65+, under 5 or with a disability</td><td>below 20%</td><td>20%</td><td>25%</td><td>30%</td><td>35%</td></tr>
+<tr><td><b>Poverty</b>: share in poverty</td><td>below 10%</td><td>10%</td><td>15%</td><td>20%</td><td>30%</td></tr>
+<tr><td><b>Complaints</b>: 311 public urination within 200 m, a year</td><td>0</td><td>1</td><td>2</td><td>3</td><td>5+</td></tr>
+</tbody></table></div>
+<p class="small">Cut-offs are round numbers, the same in every district, so a tier means the same thing everywhere. Resident factors count only on blocks with 10 or more residents, since survey shares come from the surrounding Census tract. A block within a 10-minute walk of a homeless drop-in centre counts as at least tier 4 for vulnerable residents. Ties go to more people on foot, then more residents. Choose a preset or edit a threshold under "Tier thresholds" on the Map page; the 30-site list and the Throne check always use these defaults.</p>
+<h3 class="sp">The 30 sites to consider</h3>
+<p>"Show the next 30 sites" is a fixed reference list on the default settings: one unit in each of the 17 loaded districts, then a second in the 13 districts whose next-best block ranks highest, with public land or a parking space allowed. The allocation is our choice, not part of the method. It is a shortlist for site visits, not a decision.</p>
 
 <h3 class="sp">How sites are picked</h3>
 <p>"Pick sites" follows the same five rules every time.</p>
 <ol class="rules">
 <li><b>Score every block</b> with the settings on the Map page.</li>
-<li><b>Take the block with the most need.</b></li>
+<li><b>Take the block with the highest tier</b>, and among equals the most people on foot.</li>
 <li><b>Find land.</b> If that block passes the Land rule chosen under L, the unit goes there. If not, it goes to the nearest block within 200 m that does. If there is none, the block is listed and the tool moves on.</li>
-<li><b>Count the new unit as built</b> and score every block again. Blocks near it drop, so the next pick lands somewhere else.</li>
-<li><b>Repeat</b> until the number of sites asked for is reached, or no block has any need left.</li>
+<li><b>Count the new unit as built</b> and sort every block again. Blocks near it become served, so the next pick lands somewhere else.</li>
+<li><b>Repeat</b> until the number of sites asked for is reached, or no block is left with a gap.</li>
+<li><b>Check each pick</b> at the desk: land owner, sidewalk clear path, flood plain, who must approve and what kind of restroom fits; then list what needs a site visit (sun, curb uses, below-grade structures, lighting).</li>
 </ol>
 <h3 class="sp">Your sites</h3>
 <div id="picktrace"></div>
@@ -1510,27 +1723,14 @@ table.mlist tbody tr:focus-visible {
 <p>What your choices on the Map page change in this district, compared with the defaults. Click a block on the map to see its arithmetic here too.</p>
 <div id="examples"></div>
 
-<h3 class="sp">The eight letters</h3>
-<p>Each letter does one job. Switch one off on the Map page to see what it changes.</p>
-<div class="tw"><table class="t ltab"><thead><tr><th>Letter</th><th>What it does</th><th>Rule</th></tr></thead><tbody>
-<tr><td><b>F</b> Fiscal</td><td><i>divides</i></td><td>Yearly cost of a unit ÷ the uses it adds in a year.</td></tr>
-<tr><td><b>L</b> Land</td><td><i>filters</i></td><td>A block passes under the rule chosen: parks and plazas only; any public land; public land or a sidewalk at least 15 ft wide; or public land or a parking space in the curb lane, which every block has (the default, as in our memo). The last two are policy scenarios: they show where need could be met if the city opened sidewalks or parking spaces to modular units. Schools, police, fire and similar secured sites never count as public land.</td></tr>
-<tr><td><b>U</b> Usage</td><td><i>counts</i></td><td>People on foot, from the city's street class or nearby subway entries, whichever is larger.</td></tr>
-<tr><td><b>S</b> Season</td><td><i>scenario</i></td><td>Off is a typical day. Winter closes seasonal restrooms. Evening counts only restrooms open to 8pm or later.</td></tr>
-<tr><td><b>H</b> Human</td><td><i>multiplies</i></td><td>1 + share aged 65 and over + share under 5 + share under 65 with a disability, + 0.1 within a 10-minute walk of a drop-in centre.</td></tr>
-<tr><td><b>I</b> Impact</td><td><i>multiplies</i></td><td>1 + poverty share + a small amount for public-urination complaints nearby.</td></tr>
-<tr><td><b>N</b> Nearest</td><td><i>base layer</i></td><td>Walk time to the nearest open restroom. Restrooms across open water do not count.</td></tr>
-<tr><td><b>G</b> Gauge</td><td><i>result</i></td><td>0 if a restroom is within easy reach. Otherwise 1 to 5, with 5 the most need.</td></tr>
-</tbody></table></div>
-
 <h3 class="sp">Choices made for fairness</h3>
 <ul class="fair">
-<li><b>Busy places do not win automatically</b>One unit can only serve so many people, so foot traffic above that adds nothing.</li>
-<li><b>Access comes first</b>A block with a restroom nearby scores zero.</li>
+<li><b>Access comes first</b>A block with a restroom nearby is served, however busy it is.</li>
+<li><b>One strong factor is enough</b>A block with heavy foot traffic, or many older residents, or high poverty, rises on that alone, as DOT's map lets one strong generator set a street's class.</li>
 <li><b>The walk is timed for a slower walker</b>Ten minutes is farther for a brisk adult than for an older person or a parent with a small child.</li>
 <li><b>Land and cost do not lower need</b>Neighbourhoods with little parkland are often the ones with the least access.</li>
 <li><b>Small areas are steadied</b>Survey figures from an area with few residents are blended with the district average.</li>
-<li><b>Complaints count for little</b>They show who reports as much as what happens. Arrest data is not used.</li>
+<li><b>Complaints are one factor among four</b>They show who reports as much as what happens. Arrest data is not used.</li>
 </ul>
 
 </section>
@@ -1538,20 +1738,24 @@ table.mlist tbody tr:focus-visible {
 <section id="tab-throne" class="card doc" hidden>
 <h2>Throne check</h2>
 <p class="lead">In September 2026 the city announced 17 Throne restrooms. With those units left out, does FLUSHING see need where the city put them, and more than chance would?</p>
-<p>Four tests, each compared with every block in the same districts. The weights were not adjusted to fit these sites, and the city chose them by similar logic, so agreement is a sense check, not proof. The tables follow your settings on the Map page.</p>
+<p>Four tests, each compared with every block in the same districts. The thresholds were not adjusted to fit these sites, and the city chose them by similar logic, so agreement is a sense check, not proof. The tables follow your settings on the Map page.</p>
 <div class="tw" id="backtest"></div>
 </section>
 
 <section id="tab-unknowns" class="card doc" hidden>
 <h2>Unknowns</h2>
-<p class="lead">The tool has no count of who actually needs a restroom where. Each piece is estimated as below. Use the scores to screen places, then check them on foot.</p>
+<p class="lead">The tool has no count of who actually needs a restroom where. Each piece is estimated as below. Use the tiers to screen places, then check them on foot.</p>
 <div class="tw"><table class="t"><thead><tr><th>What it needs</th><th>How it guesses</th><th>What that misses</th></tr></thead><tbody>
 <tr><td><b>People on foot</b></td><td>The city sorts streets into five classes. Each class is given the middle value of the city's pedestrian counts for it: 14,762, 7,327, 4,973, 779 and 390 a day. Subway entries within 400 m, shared among nearby blocks, are used if larger.</td><td>Bus riders, visitors and street workers. Quiet streets have almost no counts behind them.</td></tr>
-<tr><td><b>Who would use a restroom</b></td><td>A flat 1% of people on foot, capped at 120 uses a day for one unit.</td><td>The 1% is an assumption. The cap is set near the busiest of Long Beach's Throne units (119 a day on average). NYC use counts should replace both.</td></tr>
+<tr><td><b>Visits a day (contracts only)</b></td><td>A flat 1% of people on foot, capped at 120 uses a day for one unit. Not used for tiers.</td><td>The 1% is an assumption; the cap is near the busiest Throne unit in Long Beach, California (119 a day). Throne's New York counts should replace both.</td></tr>
 <tr><td><b>Walk time</b></td><td>Straight-line distance × 1.3, at 64 metres a minute.</td><td>The real route: highways, rail lines, large blocks and bridges.</td></tr>
 <tr><td><b>Who has nowhere to go</b></td><td>Nobody within 5 minutes of a restroom, everybody beyond 10, and a straight line in between.</td><td>Restrooms that are listed as open but locked, or that need a phone to enter.</td></tr>
 <tr><td><b>Greater need</b></td><td>Census shares for the people who live in the area, applied to the people walking through it.</td><td>People without a home address, beyond the area around the city's nine drop-in centres. Shelter addresses are not published. Business districts, where residents and passers-by differ.</td></tr>
-<tr><td><b>Harm already happening</b></td><td>Poverty share, plus 0.05 for each yearly complaint within 200 m, up to 0.25.</td><td>Places where people do not call 311.</td></tr>
+<tr><td><b>Poverty and complaints</b></td><td>Poverty share and yearly public-urination complaints within 200 m, each tiered on its own.</td><td>Places where people do not call 311.</td></tr>
+<tr><td><b>Thresholds</b></td><td>DOT's street classes and 50,000-rider subway rule; round numbers for the resident and poverty shares.</td><td>Cut-offs are a policy choice. The presets show how much they matter: designing for residents or for passers-by changes the list.</td></tr>
+<tr><td><b>Equal tiers</b></td><td>A tier 5 from poverty and a tier 5 from foot traffic rank the same.</td><td>They are different kinds of need. The deciding factor is always shown so readers can see which applies.</td></tr>
+<tr><td><b>Fixed rules</b></td><td>Partly served (5 to 10 minutes) lowers a tier by one; a drop-in centre within a 10-minute walk sets at least tier 4; resident factors need 10 or more residents; a subway station counts within 150 m and complaints within 200 m.</td><td>Each is a judgement call, written down so it can be tested and changed.</td></tr>
+<tr><td><b>Site check</b></td><td>Land owner, sidewalk width, flood plain, nearness to a subway station and parkland, from city data.</td><td>Sun for the solar panel, tree lines and setbacks, bus stops and other curb uses that cannot move, structures below grade, lighting. These need a site visit.</td></tr>
 <tr><td><b>Public land</b></td><td>Owner names and types in the city's tax-lot records, plus park and plaza outlines.</td><td>Setbacks from hydrants, trees and entrances; bus stops and loading zones in the curb lane. Sidewalk width is measured from the city's planimetric data, not surveyed.</td></tr>
 <tr><td><b>Other restrooms</b></td><td>Only restrooms in the city's Public Restrooms list: parks, libraries, transit, plazas and privately owned public spaces.</td><td>Restrooms in cafés, stores, hotels and malls, which many people use. Commercial districts may look needier than they are.</td></tr>
 <tr><td><b>Throne sites</b></td><td>Placed at the named intersection, or at the centre of the named park or plaza.</td><td>The exact spot inside a park, which has not been published, and whether each unit is open yet.</td></tr>
@@ -1585,7 +1789,7 @@ table.mlist tbody tr:focus-visible {
 <tr><td><b>Import restrooms</b></td><td>CSV with <code>latitude</code>/<code>lat</code>/<code>y</code> and <code>longitude</code>/<code>lon</code>/<code>lng</code>/<code>x</code> columns, and an optional column containing <code>name</code>. Or GeoJSON Points (WGS84) with <code>properties.name</code>.</td><td>Points more than 1.3 km outside the district are skipped. Stored in this browser.</td></tr>
 <tr><td><b>Boundary</b></td><td>GeoJSON Polygon or MultiPolygon (WGS84), or a .shp file in WGS84 (unzipped).</td><td>Builds a district from open data. Needs internet.</td></tr>
 <tr><td><b>Refresh restrooms</b></td><td>Socrata <code>i7jb-7jku</code></td><td>Replaces the current district's restroom list. Needs internet.</td></tr>
-<tr><td><b>Scores</b></td><td>CSV or GeoJSON, one row or feature per census block</td><td>Fields: <code>block, address, residents, walk_min, access, nearest, people_on_foot, uses_per_day, gap, added_uses, human, impact, need_weighted_uses, gauge, cost_per_added_use, land, land_owner, sidewalk_ft, near_dropin, land_passes, flood_plain, suggested_site, lon, lat</code>. Reflects the current settings.</td></tr>
+<tr><td><b>Block results</b></td><td>CSV or GeoJSON, one row or feature per census block</td><td>Fields: <code>block, address, residents, walk_min, access, nearest, people_on_foot, uses_per_day, gap_share, added_uses, tier, deciding_factor, foot_traffic_tier, residents_tier, poverty_tier, complaints_tier, subway_entries_nearby, vulnerable_share, suggested_type, cost_per_added_use, land, land_owner, sidewalk_ft, near_dropin, land_passes, flood_plain, suggested_site, lon, lat</code>. Reflects the current settings.</td></tr>
 <tr><td><b>District pack</b></td><td>JSON, version 3</td><td><code>o</code> origin [lon, lat]; all shapes are flat [x0, y0, x1, y1, …] rings in metres east and north of it. <code>blocks[]</code>: <code>id</code> census block GEOID, <code>pop</code>, <code>c</code> centre, <code>g</code> rings, <code>s65 s5 sd pv</code> tract shares, <code>pd</code> street class 1–5, <code>tr</code> subway entries, <code>wr</code> winter ratio, <code>c3</code> yearly 311 complaints, <code>lt</code> land tier 0–3, <code>fl</code> flood plain, <code>sw</code> sidewalk ft, <code>di</code> near a drop-in centre. Also <code>rest</code>, <code>user</code>, <code>off</code>, <code>st</code>, <code>dc</code>, <code>parks</code>, <code>plazas</code>, <code>cd</code>, <code>land</code>, <code>lab</code>.</td></tr>
 <tr><td><b>This tool, with my districts</b></td><td>HTML</td><td>A copy of this file with every district and edit inside it, for sharing.</td></tr>
 </tbody></table></div>
@@ -2575,7 +2779,43 @@ const DETOUR = 1.3, // straight line to walking route
   SMALL = 500, // tract size at which survey shares count fully
   SIDEWALK_FT = 15, // DOT APT rule: 6 ft 7 in unit plus 8 ft clear path
   DROPIN_M = 800, // a 10-minute walk
-  DROPIN_W = 0.1;
+  DROPIN_W = 0.1,
+  SUB_M = 150, // a subway station this close sets the block's foot-traffic tier
+  MTA_M = 100, // closer than this to a station: MTA review for structures below grade
+  MIN_RES = 10; // resident factors count only on blocks with at least this many residents
+// Tier thresholds, after DOT's Pedestrian Demand Map: each factor sorts a block into tier 1 to 5 on its own,
+// and the block takes the highest. Shares are in percent. Defaults: DOT street classes, DOT's 50,000-rider
+// subway rule for a Regional corridor, and round shares that are the same in every district.
+const TH_PRESETS = {
+  dot: {
+    name: "Default (DOT-style)",
+    sub: [20000, 50000, 100000],
+    vul: [20, 25, 30, 35],
+    pov: [10, 15, 20, 30],
+    c311: [1, 2, 3, 5],
+  },
+  equity: {
+    name: "Equity first",
+    sub: [20000, 50000, 100000],
+    vul: [15, 20, 25, 30],
+    pov: [7.5, 10, 15, 20],
+    c311: [1, 2, 3, 4],
+  },
+  foot: {
+    name: "Foot traffic first",
+    sub: [10000, 30000, 60000],
+    vul: [20, 25, 100, 100],
+    pov: [10, 15, 100, 100],
+    c311: [1, 2, 100, 100],
+  },
+};
+const DRV = [
+  "foot traffic",
+  "vulnerable residents",
+  "poverty",
+  "public-urination complaints",
+];
+const TIERNAME = ["Served", "Tier 1", "Tier 2", "Tier 3", "Tier 4", "Tier 5"];
 // Where a unit may stand. Each rule includes the ones above it.
 const SITE = [
   ["open", "Parks and plazas"],
@@ -2584,24 +2824,54 @@ const SITE = [
   ["curb", "Public land or a parking space (curb lane)"],
 ];
 const LET = [
-  ["F", "Fiscal", "What does each added use cost?", "divides"],
+  [
+    "N",
+    "Distance",
+    "Served within a 5-minute walk of an open restroom; partly served up to 10 minutes (tier lowered by one); a gap beyond.",
+    "gate",
+  ],
+  [
+    "U",
+    "Foot traffic",
+    "DOT's street class in its Pedestrian Demand Map, or a busy subway station nearby.",
+    "tiers",
+  ],
+  [
+    "H",
+    "Vulnerable residents",
+    "Share aged 65+, under 5 or with a disability; near a drop-in centre counts as at least tier 4.",
+    "tiers",
+  ],
+  [
+    "I",
+    "Poverty and complaints",
+    "Poverty rate, and 311 public-urination complaints within 200 m. Each sets its own tier.",
+    "tiers",
+  ],
+  [
+    "G",
+    "Tier",
+    "The block takes its highest single factor, after the distance rule. Served, then 1 to 5.",
+    "result",
+  ],
+  [
+    "S",
+    "Season",
+    "Off is peak demand on a typical day, as DOT designs for. Switch on to test winter or evening.",
+    "scenario",
+  ],
   [
     "L",
     "Land",
     "Switch on to hatch the blocks where a unit is not allowed.",
     "filters",
   ],
-  ["U", "Usage", "How many people are on foot here?", "counts"],
   [
-    "S",
-    "Season",
-    "Off is a typical day with every listed restroom open. Switch on to test winter or evening.",
-    "scenario",
+    "F",
+    "Cost",
+    "Shade the map by cost per visit instead (for contracts, not ranking).",
+    "view",
   ],
-  ["H", "Human", "Do people here have greater bodily need?", "multiplies"],
-  ["I", "Impact", "Is the gap already causing harm?", "multiplies"],
-  ["N", "Nearest", "How far is the nearest open restroom?", "base layer"],
-  ["G", "Gauge", "The 0 to 5 result on the map.", "result"],
 ];
 const OPS = [
   ["Park", "Parks"],
@@ -2780,6 +3050,20 @@ function prep(K) {
     .map((b) => Math.max(CAL[b.pd], b.tr))
     .sort((x, y) => x - y);
   K._umed = a[a.length >> 1];
+  // Busiest subway station near each block, whether parkland, and whether MTA would review a unit here.
+  const parkNames = new Set((K.parks || []).map((q) => q.n));
+  K.blocks.forEach((b) => {
+    let m = 0,
+      d = 1e9;
+    (K.st || []).forEach((q) => {
+      const h = Math.hypot(q.x - b.c[0], q.y - b.c[1]);
+      if (h <= SUB_M) m = Math.max(m, q.r);
+      d = Math.min(d, h);
+    });
+    b._sub = m;
+    b._mta = d <= MTA_M;
+    b._park = b.lt === 1 && parkNames.has(b.pl);
+  });
   // Small-tract adjustment: survey shares from a tract with few residents are noisy, so each tract's shares are blended with the district's,
   // weighted by tract residents / (tract residents + SMALL). Tracts with no published share take the district's.
   const T = {};
@@ -2850,6 +3134,63 @@ function P(over) {
     cost: v("cost", 235000, 1),
     T: v("tmin", 10, 1),
     speed: v("speed", 64, 10),
+    th: readTh(),
+  };
+}
+// Reads the tier-threshold table on the Map page (falls back to the defaults).
+// The default settings, used for the fixed reference results (the memo's 30 sites and the Throne check)
+// so they do not move when a viewer changes a threshold or a restroom.
+const defSt = () => ({
+  ...st,
+  on: { F: false, L: false, U: true, S: false, H: true, I: true },
+  site: "curb",
+  season: "win",
+  flood: false,
+  acc: false,
+  water: false,
+  ops: Object.fromEntries(OPS.map((o) => [o[0], true])),
+});
+const defP = () =>
+  P({
+    rate: DEFAULTS.rate / 100,
+    cap: DEFAULTS.cap,
+    cost: DEFAULTS.cost,
+    T: DEFAULTS.tmin,
+    speed: DEFAULTS.speed,
+    th: thDefault(),
+  });
+function noEdits(K, f) {
+  const { off, user } = K;
+  K.off = {};
+  K.user = [];
+  try {
+    return f();
+  } finally {
+    K.off = off;
+    K.user = user;
+  }
+}
+const thDefault = () => {
+  const d = TH_PRESETS.dot;
+  return {
+    sub: d.sub,
+    vul: d.vul.map((x) => x / 100),
+    pov: d.pov.map((x) => x / 100),
+    c311: d.c311,
+  };
+};
+function readTh() {
+  const d = TH_PRESETS.dot,
+    g = (id, def) => {
+      const e = $(id),
+        x = e ? parseFloat(e.value) : NaN;
+      return isFinite(x) ? x : def;
+    };
+  return {
+    sub: [3, 4, 5].map((t, i) => g("thsub" + t, d.sub[i] / 1000) * 1000),
+    vul: [2, 3, 4, 5].map((t, i) => g("thvul" + t, d.vul[i]) / 100),
+    pov: [2, 3, 4, 5].map((t, i) => g("thpov" + t, d.pov[i]) / 100),
+    c311: [2, 3, 4, 5].map((t, i) => g("thc" + t, d.c311[i])),
   };
 }
 function isCounted(K, r, o) {
@@ -2929,36 +3270,52 @@ function calc(K, b, R, p, o) {
     street = CAL[b.pd],
     U = o.on.U ? Math.max(street, tr) : K._umed;
   const hasH = b._s65 != null,
-    H =
-      o.on.H && hasH
-        ? 1 + b._s65 + b._s5 + (b._sd || 0) + (b.di ? DROPIN_W : 0)
-        : 1;
-  const hasI = b._pv != null,
-    cI = Math.min(0.25, 0.05 * (b.c3 || 0)),
-    I = o.on.I ? 1 + (hasI ? b._pv : 0) + cI : 1;
+    hasI = b._pv != null,
+    th = p.th,
+    cut = (v, c) => c.reduce((t, x, k) => (v >= x ? k + 2 : t), 1),
+    sub = b._sub * (win ? b.wr : 1),
+    subT =
+      sub >= th.sub[2] ? 5 : sub >= th.sub[1] ? 4 : sub >= th.sub[0] ? 3 : 0,
+    share = hasH ? b._s65 + b._s5 + (b._sd || 0) : null,
+    T4 = [
+      o.on.U ? Math.max(6 - b.pd, subT) : 0,
+      o.on.H && hasH && b.pop >= MIN_RES
+        ? Math.max(cut(share, th.vul), b.di ? 4 : 0)
+        : 0,
+      o.on.I && hasI && b.pop >= MIN_RES ? cut(b._pv, th.pov) : 0,
+      o.on.I ? cut(b.c3 || 0, th.c311) : 0,
+    ],
+    top = Math.max(1, ...T4),
+    drv = Math.max(...T4) > 0 ? T4.indexOf(Math.max(...T4)) : -1,
+    cls = walk <= half ? 0 : walk <= p.T ? 1 : 2,
+    g = cls === 0 ? 0 : cls === 1 ? Math.max(1, top - 1) : top;
+  // Visits a day are kept for contracts and cost; they do not rank blocks.
   const demand = U * p.rate,
     uses = Math.min(demand, p.cap),
     added = uses * N,
-    need = added * H * I;
+    need = g ? g * 1e7 + Math.min(U, 9e6) + b.pop / 1e4 : 0; // rank: tier, then people on foot, then residents
   return {
     walk,
     N,
     nm,
     wet,
-    cls: walk <= half ? 0 : walk <= p.T ? 1 : 2,
+    cls,
     U,
     tr,
     street,
-    H,
-    I,
-    cI,
+    sub,
+    subT,
+    share,
+    T4,
+    top,
+    drv,
     hasH,
     hasI,
     demand,
     uses,
     added,
     need,
-    g: need <= 0 ? 0 : Math.min(5, Math.floor((need / p.cap) * 5) + 1),
+    g,
     cpu: added >= 0.5 ? p.cost / (added * 365) : null,
     ok: feasible(b, o),
   };
@@ -2971,9 +3328,9 @@ function scoreAll(K, o, picks, p = P()) {
 }
 
 /* Pick sites. Each round: score every block, take the one with the most need, put the unit on the nearest block that passes Land
-   (itself, or one within SNAP metres), count that unit as built, and score again. Stops when no block has at least 1 need-weighted use. */
-function pickSites(K, o, n) {
-  const p = P(),
+   (itself, or one within SNAP metres), count that unit as built, and score again. Stops when no block is left with a gap. */
+function pickSites(K, o, n, pIn) {
+  const p = pIn || P(),
     picks = [],
     info = [],
     skipped = [],
@@ -3021,21 +3378,25 @@ function pickSites(K, o, n) {
       added: res[bi].added,
       cpu: res[bi].cpu,
       g: res[bi].g,
+      drv: res[bi].drv,
     });
     k++;
   }
   return { picks, info, skipped };
 }
 // The memo's list: every built district gets one unit, then a second goes to the 13 districts whose
-// next-best block scores highest; all 30 are ranked by need score. Uses the viewer's current settings.
+// next-best block ranks highest; all 30 are ranked by tier, then people on foot. Always the default settings,
+// so the list is a fixed reference that matches the memo whatever a viewer changes.
 function memoSites() {
   const ids = DATA.order.filter((id) => DATA.d[id]),
-    Ks = {};
+    Ks = {},
+    o = defSt(),
+    p = defP();
   ids.forEach((id) => (Ks[id] = id === D.id ? D : prep(DATA.d[id])));
   const second = new Set(
     ids
       .map((id) => {
-        const x = pickSites(Ks[id], st, 2);
+        const x = noEdits(Ks[id], () => pickSites(Ks[id], o, 2, p));
         return [id, x.info[1] ? x.info[1].need : -1];
       })
       .sort((a, b) => b[1] - a[1])
@@ -3046,8 +3407,8 @@ function memoSites() {
   ids.forEach((id) => {
     const K = Ks[id],
       n = second.has(id) ? 2 : 1,
-      x = pickSites(K, st, n),
-      res = scoreAll(K, st, []);
+      x = noEdits(K, () => pickSites(K, o, n, p)),
+      res = noEdits(K, () => scoreAll(K, o, [], p));
     x.picks.forEach((i, k) =>
       rows.push({
         id,
@@ -3063,12 +3424,12 @@ function memoSites() {
   const box = $("picks");
   box.hidden = false;
   box.innerHTML =
-    `<h3>The memo's ${rows.length} sites, across ${ids.length} districts</h3><p class="small" style="margin:0 0 8px">One unit per district, then a second in the districts whose next-best block scores highest, ranked by need score. Land: ${siteName()}. Click a row to open that district with its sites picked.</p>` +
-    `<table class="mlist"><thead><tr><th>#</th><th>Site</th><th>District</th><th>Score</th><th>Walk now</th><th>Land</th></tr></thead><tbody>` +
+    `<h3>The next ${rows.length} sites to consider, across ${ids.length} districts</h3><p class="small" style="margin:0 0 8px">The reference list in our memo, always on the default settings so it does not change when you edit a threshold. One unit per district, then a second in the 13 districts whose next-best block ranks highest; sorted by tier, then people on foot; public land or a parking space allowed. Click a row to open that district and pick its sites with your own settings. Every site still needs a site visit.</p>` +
+    `<table class="mlist"><thead><tr><th>#</th><th>Site</th><th>District</th><th>Tier (set by)</th><th>Walk now</th><th>Suggested type</th></tr></thead><tbody>` +
     rows
       .map(
         (r, k) =>
-          `<tr data-mid="${esc(r.id)}" data-mn="${r.n}" tabindex="0"><td>${k + 1}</td><td>${esc(place(r.b))}</td><td>${esc(r.name)}</td><td>${Math.round(r.q.need)} <span class="small">(${r.q.g} of 5)</span></td><td>${isFinite(r.walk) ? f1(r.walk) + " min" : "–"}</td><td>${r.b.lt ? esc(LAND[r.b.lt]) : "Parking space"}</td></tr>`,
+          `<tr data-mid="${esc(r.id)}" data-mn="${r.n}" tabindex="0"><td>${k + 1}</td><td>${esc(place(r.b))}</td><td>${esc(r.name)}</td><td>${r.q.g}${r.q.drv >= 0 ? ` <span class="small">(${DRV[r.q.drv]})</span>` : ""}</td><td>${isFinite(r.walk) ? f1(r.walk) + " min" : "–"}</td><td>${esc(siteCheck(DATA.d[r.id], r.b).type)}</td></tr>`,
       )
       .join("") +
     `</tbody></table>`;
@@ -3247,7 +3608,7 @@ function render() {
   });
   const sh = (v) => (pop ? Math.round((v / pop) * 100) + "%" : "–");
   $("stat").innerHTML =
-    `<div><b>${sh(p1)}</b><span>of ${pop.toLocaleString()} residents are within a ${p.T}-minute walk of a counted restroom</span></div><div><b>${sh(p0)}</b><span>are within easy reach, ${mins(p.T / 2)} minutes</span></div><div><b>${un}</b><span>of ${D.blocks.length} blocks are beyond ${p.T} minutes</span></div><div><b>${hi}</b><span>blocks score 4 or 5</span></div>`;
+    `<div><b>${sh(p1)}</b><span>of ${pop.toLocaleString()} residents are within a ${p.T}-minute walk of a counted restroom</span></div><div><b>${sh(p0)}</b><span>are within easy reach, ${mins(p.T / 2)} minutes</span></div><div><b>${un}</b><span>of ${D.blocks.length} blocks are beyond ${p.T} minutes</span></div><div><b>${hi}</b><span>blocks in tier 4 or 5</span></div>`;
   gO.innerHTML = "";
   D.blocks.forEach((b, i) => {
     const r = RES[i];
@@ -3504,11 +3865,11 @@ function legend() {
       gt;
   else
     h =
-      `<b style="color:var(--ink)">Gauge</b><span><i style="background:var(--g0)"></i>0 in easy reach</span>` +
+      `<b style="color:var(--ink)" title="Each block takes its highest single factor; a restroom within 5 minutes means served">Need tier</b><span title="An open restroom within a 5-minute walk"><i style="background:var(--g0)"></i>Served</span>` +
       [1, 2, 3, 4, 5]
         .map(
           (g) =>
-            `<span><i style="background:var(--g${g})"></i>${g}${g === 1 ? " low" : g === 5 ? " high" : ""}</span>`,
+            `<span><i style="background:var(--g${g})"></i>${g}${g === 1 ? " lowest" : g === 5 ? " highest" : ""}</span>`,
         )
         .join("") +
       gt;
@@ -3549,47 +3910,94 @@ function mathRows(K, b, r, p, o) {
       : r.cls === 2
         ? `${wk} walk is beyond the ${p.T}-minute standard. Gap is 1`
         : `${wk} walk: (${f1(r.walk)} − ${mins(half)}) ÷ ${mins(half)}`;
+  const th = p.th,
+    tierCell = (t) => (t ? "tier " + t : "off");
+  const subTxt = r.sub
+    ? `busiest station within ${SUB_M} m: ${Math.round(r.sub).toLocaleString()} entries a day${r.subT ? ` (tier ${r.subT})` : ""}`
+    : "no subway station within " + SUB_M + " m";
   return `<table class="steps"><tbody>
- ${row("U", o.on.U, o.on.U ? `${CLS[b.pd]} street ≈ ${r.street.toLocaleString()} people; subway share ${Math.round(r.tr).toLocaleString()}${win ? " (winter)" : ""}. <em>The larger counts.</em>` : "Usage is off: the district's middle value", Math.round(r.U).toLocaleString() + " people")}
- ${row("", true, `× need rate ${(p.rate * 100).toFixed(1)}%${r.demand > p.cap ? `, held at one unit's capacity of ${p.cap}` : ""}`, f1(r.uses) + " uses a day")}
- ${row("N", true, nTxt + (r.wet ? `. <em>${r.wet} closer across water not counted.</em>` : ""), "× " + r.N.toFixed(2) + " = " + f1(r.added))}
- ${row("H", o.on.H, r.hasH ? `1 + aged 65+ ${pct(b._s65)} + under 5 ${pct(b._s5)} + disability under 65 ${pct(b._sd || 0)}${b.di ? ` + ${DROPIN_W} near a drop-in centre` : ""}` + blend : "No survey figures for this district", o.on.H ? "× " + r.H.toFixed(2) : "off")}
- ${row("I", o.on.I, `1 + ${r.hasI ? "poverty " + pct(b._pv) : "no poverty figure"} + complaints ${b.c3 || 0} a year × 0.05${0.05 * (b.c3 || 0) > 0.25 ? ", capped at 0.25" : ""}`, o.on.I ? "× " + r.I.toFixed(2) : "off")}
- ${row("G", true, `${f1(r.added)} × ${r.H.toFixed(2)} × ${r.I.toFixed(2)} = <b>${f1(r.need)} need-weighted uses</b>, ${Math.round((r.need / p.cap) * 100)}% of one unit`, r.g + " of 5", "tot")}
+ ${row("N", true, nTxt.replace(/Gap is [01]$/, "").replace(/: \(.*\)$/, "") + (r.cls === 0 ? ": <b>Served</b>, not ranked" : r.cls === 1 ? ": <b>partly served</b>, final tier lowered by one" : ": <b>gap</b>, tier stands") + (r.wet ? `. <em>${r.wet} closer across water not counted.</em>` : ""), r.cls === 0 ? "served" : r.cls === 1 ? "−1" : "gap")}
+ ${row("U", o.on.U, `Foot traffic: ${CLS[b.pd]} street in DOT's demand map (tier ${6 - b.pd}); ${subTxt}${win ? " (winter)" : ""}`, tierCell(r.T4[0]))}
+ ${row("H", o.on.H, !r.hasH ? "No survey figures for this district" : b.pop < MIN_RES ? `Fewer than ${MIN_RES} residents, so resident factors do not count here` : `Vulnerable residents: ${pct(r.share)} aged 65+, under 5 or with a disability (tier 5 from ${pct(th.vul[3])})${b.di ? "; near a homeless drop-in centre, so at least tier 4" : ""}` + blend, tierCell(r.T4[1]))}
+ ${row("I", o.on.I, !r.hasI ? "No poverty figure" : b.pop < MIN_RES ? `Fewer than ${MIN_RES} residents` : `Poverty: ${pct(b._pv)} (tier 5 from ${pct(th.pov[3])})`, tierCell(r.T4[2]))}
+ ${row("", o.on.I, `311 public-urination complaints within 200 m: ${b.c3 || 0} a year (tier 5 from ${th.c311[3]})`, tierCell(r.T4[3]))}
+ ${row("G", true, r.g ? `Highest single factor: tier ${r.top}${r.drv >= 0 ? `, set by ${DRV[r.drv]}` : ""}${r.cls === 1 ? "; lowered by one because a restroom is within the walk standard" : ""}` : "A restroom is within easy reach, so the block is not ranked", "<b>" + TIERNAME[r.g] + "</b>", "tot")}
  ${row("L", true, landText(b), r.ok ? "passes" : "fails")}
- ${row("F", true, r.cpu == null ? "No added uses to divide by" : `$${p.cost.toLocaleString()} ÷ (${f1(r.added)} added uses × 365)`, usd(r.cpu))}
+ ${row("F", true, `For contracts: about ${f1(r.added)} visits a day (${(p.rate * 100).toFixed(1)}% of people on foot, up to ${p.cap}, times the share with no restroom nearby); ${r.cpu == null ? "no added visits" : `$${p.cost.toLocaleString()} ÷ (${f1(r.added)} × 365)`}`, usd(r.cpu))}
  ${o.on.S ? row("S", true, win ? `Winter: seasonal restrooms closed; subway × ${b.wr}` : "Evening: only restrooms open to 8pm or later count", "") : ""}
  </tbody></table>`;
 }
 
 // One paragraph, in plain words, of why a block scored what it did.
 function plainWhy(b, r, p) {
-  const out = [];
   if (r.cls === 0)
+    return `A counted restroom${r.nm ? " (" + esc(r.nm) + ")" : ""} is ${f1(r.walk)} minutes' walk away, within easy reach, so this block is served and not ranked.`;
+  const out = [];
+  out.push(
+    isFinite(r.walk)
+      ? `The nearest counted restroom${r.nm ? " (" + esc(r.nm) + ")" : ""} is ${f1(r.walk)} minutes away${r.cls === 2 ? `, beyond the ${p.T}-minute standard` : `, inside the ${p.T}-minute standard, so the tier is lowered by one`}.`
+      : "No counted restroom is within reach.",
+  );
+  if (r.drv >= 0)
     out.push(
-      `A counted restroom${r.nm ? " (" + esc(r.nm) + ")" : ""} is ${f1(r.walk)} minutes' walk away, within easy reach, so a new one here would add little.`,
+      `Its tier is set by its strongest factor, <b>${DRV[r.drv]}</b>` +
+        [
+          ` (a ${CLS[b.pd]} street in DOT's demand map${r.subT ? `, near a station with ${Math.round(r.sub).toLocaleString()} entries a day` : ""}).`,
+          ` (${pct(r.share)} of residents are 65+, under 5 or have a disability${b.di ? ", near a drop-in centre" : ""}).`,
+          ` (${pct(b._pv)} of residents in poverty).`,
+          ` (${b.c3 || 0} public-urination complaints a year within 200 m).`,
+        ][r.drv],
     );
-  else {
-    out.push(
-      `About ${Math.round(r.U).toLocaleString()} people pass on foot here each day; at ${(p.rate * 100).toFixed(1)}% that is about ${Math.round(r.uses)} restroom visits${r.demand > p.cap ? ", the most one unit can serve" : ""}.`,
-    );
-    out.push(
-      isFinite(r.walk)
-        ? `The nearest counted restroom${r.nm ? " (" + esc(r.nm) + ")" : ""} is ${f1(r.walk)} minutes away${r.cls === 2 ? `, beyond the ${p.T}-minute standard` : ", so the block gets partial credit"}.`
-        : "No counted restroom is within reach.",
-    );
-    const w = [];
-    if (st.on.H && r.H >= 1.3)
-      w.push("many older, very young or disabled residents");
-    if (st.on.I && r.I >= 1.3)
-      w.push("higher poverty or public-urination complaints");
-    if (w.length) out.push(`It counts for more because of ${w.join(" and ")}.`);
-  }
-  if (!r.ok)
-    out.push(
-      `A unit cannot stand here under the current land choice (${siteName()}).`,
-    );
+  out.push(
+    `About ${Math.round(r.added)} people a day with no restroom nearby would use a unit here, an estimate used for contracts, not ranking.`,
+  );
   return out.join(" ");
+}
+// Desk review of one candidate site, modelled on DOT's siting steps: what the data can check, what needs a site visit,
+// who must approve, and which kind of restroom fits. It never replaces a site visit.
+function siteCheck(K, b, r) {
+  const ok = [],
+    visit = [
+      "Sun on the solar panel; tree line and setbacks",
+      "Curb uses that cannot move: bus stops (about 15 ft), bike share, hydrants",
+      "Lighting at night",
+    ];
+  const lt = b.lt || 0;
+  ok.push([
+    1,
+    lt === 1
+      ? (b._park ? "Parkland: " : "Plaza: ") + esc(b.pl || "")
+      : lt === 2
+        ? "Other public land: " + esc(b.pl || "")
+        : "Street: curb lane or sidewalk",
+  ]);
+  if (b.sw != null)
+    ok.push([
+      b.sw >= SIDEWALK_FT ? 1 : 0,
+      `Widest sidewalk on the block ${b.sw} ft: ${b.sw >= SIDEWALK_FT ? "room for a unit and 8 ft of clear path" : "too narrow for a unit plus 8 ft of clear path"}`,
+    ]);
+  if (b.fl) ok.push([0, "In the flood plain"]);
+  if (b._mta)
+    visit.unshift("Subway structures below grade (MTA station drawings)");
+  const ap = ["DOT"];
+  if (b._park) ap.push("Parks");
+  if (b._mta) ap.push("MTA");
+  ap.push("Public Design Commission", "Community board");
+  const type =
+    lt === 1 && b._park
+      ? "Parks restroom by concession, or a modular unit at the park edge"
+      : lt === 1
+        ? "Modular unit on the plaza"
+        : lt === 2
+          ? "Modular unit or automatic toilet on public land"
+          : b.sw != null && b.sw >= SIDEWALK_FT
+            ? "Modular unit or automatic toilet on the sidewalk"
+            : "Modular unit in one curbside parking space";
+  return { ok, visit, ap, type };
+}
+function siteHtml(K, b, r) {
+  const c = siteCheck(K, b, r);
+  return `<div class="sitecheck"><h4 class="sub">Site check (desk review)</h4><ul class="chk2">${c.ok.map((x) => `<li class="${x[0] ? "" : "no"}">${x[0] ? "✓" : "✕"} ${x[1]}</li>`).join("")}${c.visit.map((v) => `<li class="vis">? ${v}</li>`).join("")}</ul><p class="small"><b>Who approves:</b> ${c.ap.join(" → ")}<br><b>Suggested type:</b> ${c.type}</p></div>`;
 }
 function detail() {
   const p = P();
@@ -3626,8 +4034,10 @@ function detail() {
   const b = D.blocks[st.sel],
     r = RES[st.sel];
   $("detail").innerHTML = `<h3>${esc(label(b))}</h3>
- <p class="plain"><span class="gpill" style="background:var(--g${r.g});color:${r.g >= 4 ? "#fff" : "var(--ink)"}">Score ${r.g} of 5</span> ${plainWhy(b, r, p)}</p>
- <div class="kv"><div><span>Walk to nearest counted restroom</span><b>${isFinite(r.walk) ? f1(r.walk) + " min" : "None in reach"}</b></div><div><span>Residents</span><b>${b.pop.toLocaleString()}</b></div><div><span>Visits a day from people with none nearby</span><b>${f1(r.added)}</b></div></div>
+ <h4 class="sub">What this means</h4>
+ <p class="plain"><span class="gpill" style="background:var(--g${r.g});color:${r.g >= 4 ? "#fff" : "var(--ink)"}">${TIERNAME[r.g]}${r.g ? " of 5" : ""}</span> ${plainWhy(b, r, p)}</p>
+ <div class="kv"><div><span>Walk to nearest counted restroom</span><b>${isFinite(r.walk) ? f1(r.walk) + " min" : "None in reach"}</b></div><div><span>Residents</span><b>${b.pop.toLocaleString()}</b></div><div><span>Deciding factor</span><b>${r.g && r.drv >= 0 ? DRV[r.drv] : "–"}</b></div></div>
+ ${r.g ? siteHtml(D, b, r) : ""}
  <details class="math"><summary>Show the math</summary>${mathRows(D, b, r, p)}</details>`;
 }
 
@@ -3646,13 +4056,13 @@ function listPicks() {
           .map((i, n) => {
             const b = D.blocks[i],
               x = st.pickInfo[n];
-            return `<li><b>${esc(label(b))}</b><br><span class="small">Score ${x.g} of 5 · about ${Math.round(x.added)} visits a day from people with no restroom nearby · ${landText(b)}${x.moved ? ` · moved ${x.moved} m from ${esc(place(D.blocks[x.from]))}, where a unit is not allowed` : ""}</span><details class="math"><summary>Show the math</summary><span class="small">${f1(x.need)} need-weighted uses a day when picked; ${f1(x.added)} added uses at ${usd(x.cpu)} each.</span></details></li>`;
+            return `<li><b>${esc(label(b))}</b><br><span class="small">${TIERNAME[x.g]} of 5${x.drv >= 0 ? ", set by " + DRV[x.drv] : ""} · ${esc(siteCheck(D, b).type)} · about ${Math.round(x.added)} visits a day${x.moved ? ` · moved ${x.moved} m from ${esc(place(D.blocks[x.from]))}, where a unit is not allowed` : ""}</span><details class="math"><summary>Site check</summary>${siteHtml(D, b)}</details></li>`;
           })
           .join("") +
         `</ol>`
       : `<p class="small">No eligible block (${siteName()}) has unmet need under these settings.</p>`) +
     (st.skipped.length
-      ? `<p class="small" style="margin:10px 0 0"><b>Need with no eligible land nearby:</b> ${st.skipped.map((s) => esc(place(D.blocks[s.i])) + " (" + f1(s.need) + ")").join(", ")}. No block within ${SNAP} m passes the Land rule. Widen the land choice in step 2 to place these.</p>`
+      ? `<p class="small" style="margin:10px 0 0"><b>Need with no eligible land nearby:</b> ${st.skipped.map((s) => esc(place(D.blocks[s.i])) + " (tier " + Math.floor(s.need / 1e7) + ")").join(", ")}. No block within ${SNAP} m passes the Land rule. Widen the land choice in step 2 to place these.</p>`
       : "");
 }
 
@@ -3664,12 +4074,15 @@ function methodLive() {
     dn = esc(K.name.split(" · ")[0]),
     rg = (a) => String(+(a * p.cap).toFixed(1));
   $("gscale").innerHTML = [
-    ["0", "A restroom is within easy reach"],
-    ["1", `Under ${rg(0.2)}`],
-    ["2", `${rg(0.2)} to ${rg(0.4)}`],
-    ["3", `${rg(0.4)} to ${rg(0.6)}`],
-    ["4", `${rg(0.6)} to ${rg(0.8)}`],
-    ["5", `${rg(0.8)} or more`],
+    [
+      "Served",
+      `An open restroom within a ${mins(p.T / 2)}-minute walk; not ranked`,
+    ],
+    ["1", "Lowest need among blocks with a gap"],
+    ["2", "Low"],
+    ["3", "Middle"],
+    ["4", "High"],
+    ["5", "Highest: at least one factor is in its top tier"],
   ]
     .map(
       (x, i) =>
@@ -3679,21 +4092,21 @@ function methodLive() {
 
   // Your sites: one row per pick made on the Map page
   $("picktrace").innerHTML = st.picks.length
-    ? `<div class="tw"><table class="t"><thead><tr><th>#</th><th>Site</th><th>Need-weighted uses a day</th><th>Land</th></tr></thead><tbody>${st.picks
+    ? `<div class="tw"><table class="t"><thead><tr><th>#</th><th>Site</th><th>Tier (set by)</th><th>Land</th></tr></thead><tbody>${st.picks
         .map((s, n) => {
           const q = st.pickInfo[n];
-          return `<tr><td>${n + 1}</td><td>${esc(place(K.blocks[s]))}${q.moved ? `<br><span class="small">moved ${q.moved} m from ${esc(place(K.blocks[q.from]))}</span>` : ""}</td><td class="n">${f1(q.need)}</td><td>${landText(K.blocks[s])}</td></tr>`;
+          return `<tr><td>${n + 1}</td><td>${esc(place(K.blocks[s]))}${q.moved ? `<br><span class="small">moved ${q.moved} m from ${esc(place(K.blocks[q.from]))}</span>` : ""}</td><td>${q.g}${q.drv >= 0 ? " (" + DRV[q.drv] + ")" : ""}</td><td>${landText(K.blocks[s])}</td></tr>`;
         })
         .join("")}</tbody></table></div>` +
       (st.skipped.length
-        ? `<p class="small">Passed over, with no eligible land within ${SNAP} m: ${st.skipped.map((k) => esc(place(K.blocks[k.i]))).join(", ")}. Widen the Land rule to place these.</p>`
+        ? `<p class="small">Passed over, with no eligible land within ${SNAP} m: ${st.skipped.map((k) => esc(place(K.blocks[k.i]))).join(", ")}. Widen the land choice in step 2 to place these.</p>`
         : "") +
       (() => {
         const a = scoreAll(K, st, []),
           b = scoreAll(K, st, st.picks),
           far = (r) => r.filter((x) => x.cls === 2).length,
           hi = (r) => r.filter((x) => x.g >= 4).length;
-        return `<p class="small">In ${dn}, blocks beyond a ${p.T}-minute walk go from ${far(a)} to ${far(b)}; blocks scoring 4 or 5 go from ${hi(a)} to ${hi(b)}.</p>`;
+        return `<p class="small">In ${dn}, blocks beyond a ${p.T}-minute walk go from ${far(a)} to ${far(b)}; blocks in tier 4 or 5 go from ${hi(a)} to ${hi(b)}.</p>`;
       })()
     : `<p class="small">Press "Pick sites" on the Map page. Each site, and why it was chosen, will appear here.</p>`;
 
@@ -3720,6 +4133,8 @@ function methodLive() {
   ["U", "H", "I"].forEach(
     (k) => !st.on[k] && changed.push(`${k} switched off`),
   );
+  if (JSON.stringify(p.th) !== JSON.stringify(thDefault()))
+    changed.push("Tier thresholds changed");
   if (st.on.S) changed.push(st.season === "win" ? "Winter" : "Evening");
   if (st.site !== "curb") changed.push(`Land: ${siteName()}`);
   if (st.flood) changed.push("Flood plain left out");
@@ -3748,6 +4163,7 @@ function methodLive() {
         cost: DEFAULTS.cost,
         T: DEFAULTS.tmin,
         speed: DEFAULTS.speed,
+        th: thDefault(),
       });
     // the defaults also ignore the viewer's restroom edits
     const { off, user } = K;
@@ -3770,7 +4186,7 @@ function methodLive() {
         "Blocks beyond the walk standard",
         (r) => r.filter((x) => x.cls === 2).length,
       ) +
-      row("Blocks scoring 4 or 5", (r) => r.filter((x) => x.g >= 4).length) +
+      row("Blocks in tier 4 or 5", (r) => r.filter((x) => x.g >= 4).length) +
       row("Blocks with eligible land", (r) => r.filter((x) => x.ok).length) +
       `</tbody></table></div>`;
   }
@@ -3787,12 +4203,13 @@ function methodLive() {
 // Scored with the Throne units removed. Each test is compared with every block in the same districts,
 // so "by chance" means: a site placed on a random block of those districts.
 function throneLive() {
-  const p = P(),
-    o = { ...st, ops: { ...st.ops, Throne: false } },
+  // Always on the default settings, with the 17 Throne units left out, so the check is fixed and the same for everyone.
+  const p = defP(),
+    o = { ...defSt(), ops: { ...defSt().ops, Throne: false } },
     byCd = {};
   THRONE.forEach((t) => (byCd[t[3]] = byCd[t[3]] || []).push(t));
   const rows = [],
-    chance = { own: 0, near: 0, pick: 0, n: 0 },
+    all = { n: 0, hi: 0, pick: 0 },
     missing = [];
   for (const cd in byCd) {
     if (!DATA.d[cd]) {
@@ -3800,7 +4217,7 @@ function throneLive() {
       continue;
     }
     const K = prep(DATA.d[cd]),
-      res = scoreAll(K, o, []),
+      res = noEdits(K, () => scoreAll(K, o, [], p)),
       sites = byCd[cd];
     const nearest = (x, y) =>
       K.blocks.reduce(
@@ -3811,24 +4228,9 @@ function throneLive() {
             : m,
         0,
       );
-    const best = (x, y) => {
-      let bi = nearest(x, y);
-      K.blocks.forEach((b, i) => {
-        if (
-          Math.hypot(b.c[0] - x, b.c[1] - y) <= SNAP &&
-          res[i].need > res[bi].need
-        )
-          bi = i;
-      });
-      return bi;
-    };
-    const rank = (v) =>
-      Math.round((res.filter((r) => r.need < v).length / res.length) * 100);
-    // FLUSHING's own picks: as many units as the city placed here, on public land like the pilot
-    const picks = pickSites(
-        K,
-        { ...o, site: "public" },
-        sites.length,
+    // FLUSHING's own picks: as many units as the city placed in this district, on public land as the pilot was
+    const picks = noEdits(K, () =>
+        pickSites(K, { ...o, site: "public" }, sites.length, p),
       ).picks.map((i) => K.blocks[i].c),
       toPick = (x, y) =>
         picks.length
@@ -3836,70 +4238,44 @@ function throneLive() {
           : Infinity;
     for (const t of sites) {
       const [x, y] = toXY(K, t[2], t[1]),
-        nb = nearest(x, y),
-        bb = best(x, y);
-      rows.push({
-        t,
-        cd,
-        own: res[nb].g,
-        near: res[bb].g,
-        pct: rank(res[nb].need),
-        pick: toPick(x, y),
-        why: res[nb],
-        blk: K.blocks[nb],
-      });
+        nb = nearest(x, y);
+      rows.push({ t, cd, r: res[nb], blk: K.blocks[nb], pick: toPick(x, y) });
     }
     K.blocks.forEach((b, i) => {
-      chance.n++;
-      if (res[i].g >= 3) chance.own++;
-      if (res[best(b.c[0], b.c[1])].g >= 3) chance.near++;
-      if (toPick(b.c[0], b.c[1]) <= 400) chance.pick++;
+      all.n++;
+      if (res[i].g >= 3) all.hi++;
+      if (toPick(b.c[0], b.c[1]) <= 400) all.pick++;
     });
   }
   const n = rows.length,
-    cnt = (f) => rows.filter(f).length,
-    exp = (k) => (chance.n ? ((chance[k] / chance.n) * n).toFixed(1) : "–"),
-    med = n ? rows.map((r) => r.pct).sort((a, b) => a - b)[n >> 1] : 0,
+    hi = rows.filter((x) => x.r.g >= 3).length,
+    share = all.n ? all.hi / all.n : 0,
+    near = rows.filter((x) => x.pick <= 400).length,
     dist = (m) =>
       isFinite(m)
         ? m < 1000
           ? Math.round(m / 10) * 10 + " m"
           : (m / 1000).toFixed(1) + " km"
-        : "–";
-  const why = (r) => {
-    const w = r.why,
-      cls = CLS[r.blk.pd].toLowerCase();
-    return w.cls === 0
-      ? `Restroom ${mins(w.walk)} min away`
-      : w.cls === 2
-        ? `No restroom within ${p.T} min; ${cls} street`
-        : `Restroom ${mins(w.walk)} min away; ${cls} street`;
-  };
-  const ord = (k) =>
-    k +
-    (k % 100 >= 11 && k % 100 <= 13
-      ? "th"
-      : ["th", "st", "nd", "rd"][k % 10] || "th");
-  const chip = (g) =>
-    `<i class="chip" style="background:var(--g${g})"></i>${g}`;
+        : "–",
+    chip = (g) =>
+      `<i class="chip" style="background:var(--g${g})"></i>${TIERNAME[g]}`,
+    bar = (v, max, lab, dark) =>
+      `<div class="tbar"><span>${lab}</span><div><i style="width:${Math.round((v / max) * 100)}%;background:${dark ? "var(--g4)" : "var(--line)"}"></i></div><b>${v.toFixed ? (Number.isInteger(v) ? v : v.toFixed(1)) : v}</b></div>`;
   $("backtest").innerHTML =
     (n
-      ? `<table class="t"><thead><tr><th>Test</th><th>Throne sites</th><th>Expected by chance</th></tr></thead><tbody>
-<tr><td>The site's own block scores 3 or more</td><td class="n"><b>${cnt((r) => r.own >= 3)} of ${n}</b></td><td class="n">${exp("own")}</td></tr>
-<tr><td>A block within ${SNAP} m scores 3 or more</td><td class="n"><b>${cnt((r) => r.near >= 3)} of ${n}</b></td><td class="n">${exp("near")}</td></tr>
-<tr><td>A FLUSHING pick lands within 400 m (a 5-minute walk), placing as many units per district as the city did</td><td class="n"><b>${cnt((r) => r.pick <= 400)} of ${n}</b></td><td class="n">${exp("pick")}</td></tr>
-<tr><td>Median rank of the site's block by need within its district</td><td class="n"><b>${ord(med)} percentile</b></td><td class="n">50th</td></tr>
-</tbody></table>
-<p class="small">"By chance" is the same test applied to every block in these districts. Agreement well above chance means FLUSHING sees what the city saw; picks far from a site mean FLUSHING would have placed that unit elsewhere.</p>`
+      ? `<p><b>With the 17 Throne units left out, ${hi} of the ${n} Throne sites sit on blocks in tier 3 or higher.</b> Across all ${all.n.toLocaleString()} blocks in the same districts, ${Math.round(share * 100)}% are tier 3 or higher, so 17 sites dropped on random blocks would land about ${(share * n).toFixed(1)} on such blocks.</p>
+<div class="tbars">${bar(hi, n, "Throne sites on tier 3+ blocks", true)}${bar(share * n, n, "Random placement, on average", false)}</div>
+<p><b>If FLUSHING placed the same number of units in each district</b>, on public land as the pilot did, ${near} of its picks would fall within a 5-minute walk (400 m) of a Throne site. FLUSHING agrees with the city about where need is, and often chooses a different block nearby.</p>
+<p class="small">This check always uses the default settings, so it reads the same for everyone. Tiers come from fixed thresholds that are the same in every district, not from ranking blocks against each other, so a tier means the same thing in the Bronx as in Midtown. It is a sense check, not proof: these districts were loaded because Throne is in them.</p>`
       : "") +
-    `<div class="tw"><table class="t"><thead><tr><th>Announced site</th><th>District</th><th>Own block</th><th>Best within ${SNAP} m</th><th>Need rank</th><th>Nearest FLUSHING pick</th><th>Why</th></tr></thead><tbody>${rows
+    `<div class="tw"><table class="t"><thead><tr><th>Announced site</th><th>District</th><th>Tier of its block</th><th>Deciding factor</th><th>Walk to nearest other restroom</th><th>Nearest FLUSHING pick</th></tr></thead><tbody>${rows
       .map(
-        (r) =>
-          `<tr><td>${esc(r.t[0])}</td><td>${esc(cdName(r.cd).split(" · ")[0])}</td><td class="n">${chip(r.own)}</td><td class="n">${chip(r.near)}</td><td class="n">${ord(r.pct)}</td><td class="n">${dist(r.pick)}</td><td>${why(r)}</td></tr>`,
+        (x) =>
+          `<tr><td>${esc(x.t[0])}</td><td>${esc(cdName(x.cd).split(" · ")[0])}</td><td>${chip(x.r.g)}</td><td>${x.r.g && x.r.drv >= 0 ? DRV[x.r.drv] : "–"}</td><td class="n">${isFinite(x.r.walk) ? mins(x.r.walk) + " min" : "none in reach"}</td><td class="n">${dist(x.pick)}</td></tr>`,
       )
       .join(
         "",
-      )}${missing.map((cd) => `<tr><td colspan="6">${esc(cdName(cd))}: not loaded.</td><td><button class="btn" data-build="${cd}">Build it</button></td></tr>`).join("")}</tbody></table></div>`;
+      )}${missing.map((cd) => `<tr><td colspan="5">${esc(cdName(cd))}: not loaded.</td><td><button class="btn" data-build="${cd}">Build it</button></td></tr>`).join("")}</tbody></table></div>`;
   $("backtest")
     .querySelectorAll("[data-build]")
     .forEach(
@@ -3996,7 +4372,7 @@ function cityLive() {
   stats.sort((a, b) => b.far - a.far);
   const pct = (a, b) => (b ? Math.round((a / b) * 100) + "%" : "–");
   $("cityTable").innerHTML =
-    `<table class="t"><thead><tr><th>#</th><th>District</th><th>Residents beyond a ${p.T}-min walk</th><th>Share</th><th>Blocks scoring 5</th><th>Blocks 4–5</th><th>Highest-scoring block</th></tr></thead><tbody>${stats
+    `<table class="t"><thead><tr><th>#</th><th>District</th><th>Residents beyond a ${p.T}-min walk</th><th>Share</th><th>Tier 5 blocks</th><th>Tier 4–5 blocks</th><th>Highest-ranked block</th></tr></thead><tbody>${stats
       .map(
         (r, i) =>
           `<tr><td>${i + 1}</td><td><a href="#map" data-go="${r.id}">${esc(cdLabel(r.id).split(" · ")[0])}</a></td><td class="n">${r.far.toLocaleString()}</td><td class="n">${pct(r.far, r.pop)}</td><td class="n">${r.g5}</td><td class="n">${r.g45}</td><td>${esc(r.top)}</td></tr>`,
@@ -4011,11 +4387,11 @@ function cityLive() {
     },
   );
   $("citySum").textContent =
-    `Across ${stats.length} built districts: ${tot.far.toLocaleString()} of ${tot.pop.toLocaleString()} residents (${pct(tot.far, tot.pop)}) live beyond a ${p.T}-minute walk of a counted restroom, and ${tot.g5} blocks score 5.`;
+    `Across ${stats.length} built districts: ${tot.far.toLocaleString()} of ${tot.pop.toLocaleString()} residents (${pct(tot.far, tot.pop)}) live beyond a ${p.T}-minute walk of a counted restroom, and ${tot.g5} blocks are tier 5.`;
   $("cityMaps").innerHTML = panels.join("");
   $("cityLegend").innerHTML =
-    `<b style="color:var(--ink)">Gauge</b>` +
-    ["0 in easy reach", "1", "2", "3", "4", "5 most need"]
+    `<b style="color:var(--ink)">Need tier</b>` +
+    ["Served", "1", "2", "3", "4", "5 most need"]
       .map((t, g) => `<span><i style="background:var(--g${g})"></i>${t}</span>`)
       .join("");
   const go = (id) => {
@@ -4104,6 +4480,8 @@ function changed() {
   OPS.forEach((o, i) => {
     if (!$("op" + i).disabled) st.ops[o[0]] = $("op" + i).checked;
   });
+  $("scen").value = st.on.S ? st.season : "peak";
+  $("acc2").checked = st.acc;
   repick();
 }
 document
@@ -4123,6 +4501,109 @@ $("gclose").onclick = () => {
   try {
     localStorage.setItem("flushing-guide", "off");
   } catch (e) {}
+};
+// Tier thresholds: a preset fills the table; editing a cell switches the preset to Custom.
+function fillTh(k) {
+  const t = TH_PRESETS[k];
+  if (!t) return;
+  [3, 4, 5].forEach((n, i) => ($("thsub" + n).value = t.sub[i] / 1000));
+  [2, 3, 4, 5].forEach((n, i) => {
+    $("thvul" + n).value = t.vul[i];
+    $("thpov" + n).value = t.pov[i];
+    $("thc" + n).value = t.c311[i];
+  });
+}
+$("thpreset").addEventListener("input", (e) => {
+  fillTh(e.target.value);
+  repick();
+});
+document.querySelectorAll(".thtab input").forEach((e) =>
+  e.addEventListener("input", () => {
+    $("thpreset").value = "custom";
+    repick();
+  }),
+);
+// Scenario switch on the map: peak (default), winter or evening, and accessible restrooms only.
+$("scen").addEventListener("input", (e) => {
+  const v = e.target.value;
+  $("swS").checked = v !== "peak";
+  if (v === "win") $("seaW").checked = true;
+  if (v === "eve") $("seaE").checked = true;
+  changed();
+});
+$("acc2").addEventListener("input", (e) => {
+  $("acc").checked = e.target.checked;
+  changed();
+});
+// Address search (NYC Planning Labs GeoSearch) and "Use my location": open the district and select the block.
+function goLL(lon, lat, label) {
+  for (const id of Object.keys(DATA.d)) {
+    const K = prep(DATA.d[id]),
+      x = (lon - K.o[0]) * K._kx,
+      y = (lat - K.o[1]) * K._ky;
+    if (!(K.cd || []).some((r) => Geo.inRing(x, y, r))) continue;
+    showDist(id);
+    if (D !== K) load(id);
+    let bi = 0,
+      bd = 1e12;
+    K.blocks.forEach((b, i) => {
+      const d = Math.hypot(b.c[0] - x, b.c[1] - y);
+      if (d < bd) {
+        bd = d;
+        bi = i;
+      }
+    });
+    st.sel = bi;
+    st.selR = null;
+    render();
+    $("qmsg").textContent =
+      `Showing ${label}: ${K.name.split(" · ")[0]}. The selected block is outlined; its card is below the map.`;
+    return;
+  }
+  $("qmsg").textContent =
+    `${label} is not in a loaded district. Build its community district under "Districts and your own data", then search again.`;
+}
+async function findPlace() {
+  const q = $("q").value.trim();
+  if (!q) return;
+  $("qmsg").textContent = "Searching…";
+  try {
+    const r = await fetch(
+        "https://geosearch.planninglabs.nyc/v2/search?size=1&text=" +
+          encodeURIComponent(q),
+      ),
+      j = await r.json(),
+      f = j.features && j.features[0];
+    if (!f) {
+      $("qmsg").textContent =
+        "No match in New York City. Try a street address or a landmark.";
+      return;
+    }
+    goLL(
+      f.geometry.coordinates[0],
+      f.geometry.coordinates[1],
+      f.properties.label || q,
+    );
+  } catch (e) {
+    $("qmsg").textContent =
+      "Search needs internet. Pick a district from the list instead.";
+  }
+}
+$("qgo").onclick = findPlace;
+$("q").addEventListener("keydown", (e) => e.key === "Enter" && findPlace());
+$("qme").onclick = () => {
+  if (!navigator.geolocation) {
+    $("qmsg").textContent = "This browser cannot share your location.";
+    return;
+  }
+  $("qmsg").textContent = "Finding you…";
+  navigator.geolocation.getCurrentPosition(
+    (pos) => goLL(pos.coords.longitude, pos.coords.latitude, "your location"),
+    () =>
+      ($("qmsg").textContent =
+        "Location was not shared. Search an address instead."),
+    { timeout: 10000 },
+  );
 };
 // The "How it works" menu closes once a page is chosen, or on a click elsewhere.
 document
@@ -4242,7 +4723,7 @@ svg.addEventListener("mousemove", (e) => {
     r = RES[i],
     bx = svg.parentNode.getBoundingClientRect();
   tip.hidden = false;
-  tip.textContent = `${place(b)} · ${isFinite(r.walk) ? f1(r.walk) + " min walk" : "no restroom in reach"} · gauge ${r.g}`;
+  tip.textContent = `${place(b)} · ${isFinite(r.walk) ? f1(r.walk) + " min walk" : "no restroom in reach"} · ${r.g ? "tier " + r.g : "served"}`;
   tip.style.left =
     Math.max(4, Math.min(e.clientX - bx.left + 14, bx.width - 265)) + "px";
   tip.style.top = e.clientY - bx.top + 14 + "px";
@@ -4745,16 +5226,21 @@ function resultRows() {
       address: place(b),
       residents: b.pop,
       walk_min: isFinite(r.walk) ? +r.walk.toFixed(1) : "",
-      access: ["easy reach", "within standard", "beyond standard"][r.cls],
+      access: ["served", "partly served", "gap"][r.cls],
       nearest: r.nm || "",
       people_on_foot: Math.round(r.U),
       uses_per_day: +r.uses.toFixed(1),
-      gap: +r.N.toFixed(2),
+      gap_share: +r.N.toFixed(2),
       added_uses: +r.added.toFixed(1),
-      human: +r.H.toFixed(2),
-      impact: +r.I.toFixed(2),
-      need_weighted_uses: +r.need.toFixed(1),
-      gauge: r.g,
+      tier: r.g,
+      deciding_factor: r.g && r.drv >= 0 ? DRV[r.drv] : "",
+      foot_traffic_tier: r.T4[0],
+      residents_tier: r.T4[1],
+      poverty_tier: r.T4[2],
+      complaints_tier: r.T4[3],
+      subway_entries_nearby: Math.round(r.sub || 0),
+      vulnerable_share: r.share == null ? "" : +r.share.toFixed(3),
+      suggested_type: r.g ? siteCheck(D, b, r).type : "",
       cost_per_added_use: r.cpu == null ? "" : +r.cpu.toFixed(2),
       land: LAND[b.lt || 0],
       land_owner: b.pl || "",
