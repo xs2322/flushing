@@ -1617,6 +1617,16 @@ details.edit > summary {
 ol.tl li {
   margin-bottom: 6px;
 }
+.let.plain {
+  grid-template-columns: 0 minmax(0, 1fr) auto;
+  column-gap: 0;
+}
+#extrasw .let:first-child {
+  margin-top: 6px;
+}
+.rail .let .nm {
+  color: var(--rail-ink);
+}
 </style>
 
 </head>
@@ -1652,6 +1662,7 @@ ol.tl li {
     <label class="row">Yearly cost per unit ($)<input id="cost" type="number" min="10000" max="1000000" step="5000" value="235000"></label>
     <label class="row">Walk standard (minutes)<input id="tmin" type="number" min="4" max="20" step="1" value="10"></label>
     <label class="row">Walking speed (metres a minute)<input id="speed" type="number" min="40" max="90" step="1" value="64"></label>
+    <div id="extrasw"></div>
     <p>The walk standard and speed decide who is served. The other three only estimate visits and cost for contracts; they do not change tiers. The share is an assumption until the city publishes Throne's New York use counts; the best public data are from Throne's Long Beach, California pilot, where the busiest unit averaged 119 uses a day. Cost is the Throne pilot: $4M for 17 units for a year, units and service together. Speed is set for a slower walker; a brisk adult is about 80.</p>
   </details>
     <details class="sec sub"><summary>Which restrooms count</summary>
@@ -4583,16 +4594,24 @@ function cityPng(bn) {
 }
 
 /* ---------- controls ---------- */
-$("letters").innerHTML = LET.map((l) => {
+// The eight FLUSHING letters, in order, in step 1's drawer. Land and Site check are set in step 2, so the drawer
+// points there and step 2 carries their controls; Season and Cost view are plain switches, not letters.
+function letRow(l, mode) {
   const k = l[4],
     fixed = k === "N" || k === "G" || k === "K";
-  let opt = "";
-  if (k === "L")
+  let opt = "",
+    right = fixed ? `<span class="fix">always on</span>` : `<input type="checkbox" class="sw" id="sw${k}" aria-label="${l[1]}" ${(st.on[k] ?? true) ? "checked" : ""}>`;
+  if (mode === "point") right = `<span class="fix">step 2</span>`;
+  if (mode !== "point" && k === "L")
     opt = `<div class="opt">${SITE.map((x) => `<label><input type="radio" name="site" value="${x[0]}" ${x[0] === st.site ? "checked" : ""}><span>${x[1]}</span></label>`).join("")}<label><input type="checkbox" id="flood"><span>Leave out the flood plain</span></label></div>`;
   if (k === "S")
     opt = `<div class="opt"><label><input type="radio" name="sea" id="seaW" value="win" checked><span>Winter</span></label><label><input type="radio" name="sea" id="seaE" value="eve"><span>Evening, after 8pm</span></label></div>`;
-  return `<div class="let" data-k="${k}"><div class="L" style="background:${l[5]}">${l[0]}</div><div><div class="nm">${l[1]}<span class="tp">${l[3]}</span></div><div class="ds">${l[2]}</div></div>${fixed ? `<span class="fix">always on</span>` : `<input type="checkbox" class="sw" id="sw${k}" aria-label="${l[1]}" ${(st.on[k] ?? true) ? "checked" : ""}>`}${opt}</div>`;
-}).join("");
+  const badge = mode === "plain" ? `<div></div>` : `<div class="L" style="background:${l[5]}">${l[0]}</div>`;
+  return `<div class="let${mode === "plain" ? " plain" : ""}" data-k="${k}">${badge}<div><div class="nm">${l[1]}<span class="tp">${l[3]}</span></div><div class="ds">${mode === "point" ? (k === "L" ? "Where a unit may stand: parks and plazas, public land, a wide sidewalk or a parking space. Never changes the tier. Set in step 2." : "A desk review of each pick against city siting steps. Shown in step 2 and on every pick.") : l[2]}</div></div>${right}${opt}</div>`;
+}
+$("letters").innerHTML = LET.slice(0, 8).map((l) => letRow(l, l[4] === "L" || l[4] === "K" ? "point" : "full")).join("");
+$("landbox").innerHTML = LET.filter((l) => l[4] === "L" || l[4] === "K").map((l) => letRow(l, "full")).join("");
+$("extrasw").innerHTML = LET.slice(8).map((l) => letRow(l, "plain")).join("");
 function repick() {
   if (st.picks.length || st.skipped.length) pick();
   else render();
@@ -4615,12 +4634,10 @@ function changed() {
   repick();
 }
 document
-  .querySelectorAll("#letters input,details.sec .row input,#acc,#water")
+  .querySelectorAll("#letters input,#landbox input,#extrasw input,details.sec .row input,#acc,#water")
   .forEach((e) => e.addEventListener("input", changed));
 // Step 2 holds the Land rule; the other letters stay in step 1's "What goes into the score" drawer.
-document.querySelectorAll("#letters .let").forEach((n) => {
-  if (n.dataset.k === "L" || n.dataset.k === "K") $("landbox").appendChild(n);
-});
+
 // The one-minute story: five cards above the map, each with an action that moves the map. Closing it is remembered per browser.
 const STORY = [
   ["The gap", "Nearly 1 in 3 New Yorkers, about 2.6 million people, live more than a 10-minute walk from an open public restroom, and 82% of them live in districts the 17 Throne units did not reach. In Queens CD 7, which includes Flushing, 119,626 residents are out of reach: more than all of Manhattan. Local Law 58 asks for 1,145 more restrooms by 2035 and names what should guide siting, but not how to weigh it.", null],
