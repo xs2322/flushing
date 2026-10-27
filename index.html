@@ -6721,19 +6721,25 @@ function panelVuln(box, X, p) {
 const LST = { scope: "district", q: "", type: "", cnt: "", stat: "", sort: "name", dir: 1 };
 let LSTROWS = [];
 function listRows() {
-  const ids = LST.scope === "all" ? DATA.order : [D.id], seen = new Set(), rows = [];
+  // Each district pack also carries restrooms just across its line, so one restroom can appear in two or three packs,
+  // with coordinates that differ in the fifth decimal. Keep one copy per name within about 100 m, and label it with the
+  // district whose boundary actually contains it.
+  const ids = LST.scope === "all" ? DATA.order : [D.id], seen = new Map(), byName = {};
   ids.forEach((id) => {
     const K = prep(DATA.d[id]);
     allRest(K).forEach((r) => {
       if (r.t === "User") return;
-      const ll = toLL(K, r.x, r.y), key = r.n + "|" + ll[0].toFixed(4) + "|" + ll[1].toFixed(4);
-      if (seen.has(key)) return;
-      seen.add(key);
+      const ll = toLL(K, r.x, r.y), inside = inDist(K, r);
+      const twins = (byName[r.n] = byName[r.n] || []);
+      let key = twins.find((t) => Math.hypot((t[1] - ll[0]) * 84000, (t[2] - ll[1]) * 111000) < 60);
+      key = key ? key[0] : (twins.push([r.n + "|" + twins.length, ll[0], ll[1]]), r.n + "|" + (twins.length - 1));
+      const old = seen.get(key);
+      if (old && (old.inside || !inside)) return;
       const hi = hoursInfo(r.h);
-      rows.push({ id, k: r._k, ll, name: r.n, dist: K.name.split(" · ")[0], type: (OPS.find((o) => o[0] === r.t) || [0, r.t])[1], op: r.op || "", status: r.t === "Throne" || r.t === "Subway" ? "Operational" : statusTxt(r), out: r.t === "User" ? 0 : ["out", "planned"].includes(condOf(K, r, st)) ? 1 : 0, hours: r.t === "Throne" ? "7 am–10 pm daily" : hi.txt, readable: r.t === "Throne" || hi.ok, acc: r.ac === 2 ? "Yes" : r.ac === 1 ? "Partly" : r.ac === 0 ? "No" : "Not listed", cs: r.cs === 2 ? "Yes" : r.cs === 1 ? "Some rooms" : r.cs === 0 ? "No" : "–", ag: r.ag ? "Yes" : r.ag === 0 ? "No" : "–", late: r.ev ? "Yes" : "No", counted: isCounted(K, r) ? "Yes" : "No" });
+      seen.set(key, { inside, id, k: r._k, ll, name: r.n, dist: inside ? K.name.split(" · ")[0] : "Outside " + K.name.split(" · ")[0], type: (OPS.find((o) => o[0] === r.t) || [0, r.t])[1], op: r.op || "", status: r.t === "Throne" || r.t === "Subway" ? "Operational" : statusTxt(r), out: ["out", "planned"].includes(condOf(K, r, st)) ? 1 : 0, hours: r.t === "Throne" ? "7 am–10 pm daily" : hi.txt, readable: r.t === "Throne" || hi.ok, acc: r.ac === 2 ? "Yes" : r.ac === 1 ? "Partly" : r.ac === 0 ? "No" : "Not listed", cs: r.cs === 2 ? "Yes" : r.cs === 1 ? "Some rooms" : r.cs === 0 ? "No" : "–", ag: r.ag ? "Yes" : r.ag === 0 ? "No" : "–", late: r.ev ? "Yes" : "No", counted: isCounted(K, r) ? "Yes" : "No" });
     });
   });
-  return rows;
+  return [...seen.values()];
 }
 function listRender() {
   if (!D) return;
@@ -6751,7 +6757,7 @@ function listRender() {
   <select id="lsC"><option value="">Counted or not</option><option value="Yes" ${LST.cnt === "Yes" ? "selected" : ""}>Counts on the map</option><option value="No" ${LST.cnt === "No" ? "selected" : ""}>Does not count</option></select>
   <select id="lsS"><option value="">Any status</option><option value="out" ${LST.stat === "out" ? "selected" : ""}>Closed, out of service or planned</option><option value="in" ${LST.stat === "in" ? "selected" : ""}>In service</option></select>
   <button class="btn" id="lsCsv">Save list (CSV)</button></div>
-  <p class="small">${rows.length.toLocaleString()} restrooms, ${LSTROWS.filter((r) => r.out).length} of them closed, out of service or planned. ${LSTROWS.filter((r) => r.hours === "Not listed").length} have no hours listed; ${LSTROWS.filter((r) => !r.readable && r.hours !== "Not listed").length} list hours the tool cannot read (such as "dusk"), shown as written. Click a name to see it on the map.</p>`;
+  <p class="small">${rows.length.toLocaleString()} restrooms shown. ${LST.scope === "all" ? `In all: ${LSTROWS.filter((r) => !/Throne|Subway/.test(r.type)).length.toLocaleString()} from the city's Public Restrooms list, ${LSTROWS.filter((r) => /Subway/.test(r.type)).length} MTA subway restrooms and ${LSTROWS.filter((r) => /Throne/.test(r.type)).length} Throne units; ` : ""}${LSTROWS.filter((r) => r.out).length} closed, out of service or planned. ${LSTROWS.filter((r) => r.hours === "Not listed").length} have no hours listed; ${LSTROWS.filter((r) => !r.readable && r.hours !== "Not listed").length} list hours the tool cannot read (such as "dusk"), shown as written. Click a name to see it on the map.</p>`;
   box.innerHTML = `<div class="tw"><table class="mlist ltab"><thead><tr>${C.map(([c, t]) => `<th><button class="sortb" data-sort="${c}">${t}${LST.sort === c ? (LST.dir > 0 ? " ▲" : " ▼") : ""}</button></th>`).join("")}</tr></thead><tbody>${rows.slice(0, 1500).map((r) => `<tr><td><a href="#" data-go="${r.id}|${r.k}">${esc(r.name)}</a></td><td>${esc(r.dist)}</td><td>${esc(r.type)}</td><td>${esc(r.op)}</td><td>${esc(r.status)}</td><td class="small">${esc(r.hours)}</td><td>${r.acc}</td><td>${r.cs}</td><td>${r.ag}</td><td>${r.late}</td><td>${r.counted}</td></tr>`).join("")}</tbody></table></div>`;
   $("lsD").onclick = () => { LST.scope = "district"; listRender(); };
   $("lsA").onclick = () => { LST.scope = "all"; $("listBox").innerHTML = `<p class="small">Loading every district…</p>`; setTimeout(listRender, 20); };
