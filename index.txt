@@ -1,0 +1,307 @@
+1. detour factor is now a setting
+2. P() reads detour
+3. defaults include detour
+4. method-page defaults include detour
+5. DEFAULTS detour
+6. DOT-literal subway preset
+7. subway restrooms as a restroom type
+8. subway restrooms off by default
+9. defaults leave subway restrooms out (2 places)
+10. subway restrooms placed in each district
+11. allRest includes subway restrooms
+12. subway restroom colour
+13. pickSites accepts a ring preference
+14. ring-aware selection
+15. lens overlay layer
+16. remember the width the map was fitted at
+17. lens scorings per render
+18. lens shading
+19. lens panel
+20. lens overlay redrawn with markers
+21. lens legend
+22. who to contact on every block
+23. site check: zoning, APT rule, co-location
+24. Numbers tab
+25. keep the view across tabs
+26. lens module
+27. start with the remembered lens
+28. title
+29. version badge
+30. nav: Numbers
+31. rail: plain-language tier definition
+32. threshold note corrected
+33. preset option
+34. detour input
+35. speed and detour sourced
+36. key terms: tier
+37. key terms: clear path, lens, ring
+38. lens bar on top of the map card
+39. lens panel card
+40. method lead
+41. method worked example
+42. method table subway note
+43. unknowns thresholds
+44. unknowns drop-in radius
+45. sources: new datasets
+46. about: LL58 decision-maker
+47. about: what we heard, upkeep, changes
+48. Numbers page
+49. lens styles
+50. lens data embedded
+51. v4.1 default = DOT's subway rule
+52. v3 cut-offs kept as a preset
+53. no station means no subway rating
+54. threshold table shows 'none'
+55. tier 3 input
+56. tier 4 input
+57. tier 5 input
+58. preset label
+59. preset v3 option
+60. threshold note
+61. method table subway
+62. unknowns subway
+63. code comment
+64. rail: attribute to DOT staff
+65. about: attribute
+66. story: attribute
+67. method lead: attribute
+68. strict rule: changing station, all-gender
+69. restroom attributes
+70. Throne units are single-user
+71. restroom panel: new fields
+72. about: v4.1 changes
+73. detour 1.45
+74. P() detour 1.45
+75. DEFAULTS detour 1.45
+76. detour input 1.45
+77. walk text 1.45 (2 places)
+78. detour sourced note
+79. unknowns walk
+80. pedestrian medians
+81. unknowns pedestrian values
+82. sources pedestrian
+83. city-average blend
+84. math text city blend
+85. fairness text city blend
+86. operator switches
+87. operator state
+88. defaults: every operator counts (2 places)
+89. operator list on load
+90. operator list container
+91. site check: LPC, special district, flood
+92. approvals: LPC
+93. every district in the list
+94. Throne districts view keeps the 17
+95. memo button removed
+96. rail: point to Shortlists
+97. district hint
+98. districts: custom area only
+99. districts text
+100. shorter map
+101. layout B at start
+102. shortlist buttons
+103. List and Shortlists tabs
+104. tab renders
+105. nav
+106. Throne districts title
+107. Throne districts lead
+108. Throne districts note
+109. story: the gap, recomputed
+110. story: one block
+111. story: shortlists
+112. how to use: step 5
+113. how to use: step 6
+114. what is inside: 59 districts
+115. timeline
+116. remove cost and change notes
+117. remove internal row
+118. reviewer question
+119. one file
+120. method: remove 30-site section
+121. unknowns other restrooms
+122. remove still needed
+123. sources PLUTO lens
+124. sources: boundaries and OSM
+125. List, Shortlists and Numbers pages
+126. v4.2 styles
+127. preset wording
+128. threshold note wording
+129. sources wording
+130. 4.2b: List keeps open and closed listings apart
+131. 4.2b: List twin key carries open/closed
+132. 4.2b: List district label helper
+133. 4.2b: List district label
+134. 4.2b: List hours source
+135. 4.2b: List access source
+136. 4.2b: List CSV sources
+137. 4.2b: restroom details show sources
+138. 4.2b: coverage counts filled access
+139. 4.2b: coverage note on filled access
+140. 4.2b: method note on fills
+141. 4.2b: sources row
+142. 4.2c: title
+143. 4.2c: meta description
+144. 4.2c: og title
+145. 4.2c: header
+146. 4.2c: name in text
+147. 4.2c: name in text
+148. 4.2c: name in text
+149. 4.2c: name in text
+150. 4.2c: name in text
+151. 4.2c: name in text
+152. 4.2c: name in text
+153. 4.2c: name in text
+154. 4.2c: name in text
+155. 4.2c: name in text
+156. 4.2c: name in text
+157. 4.2c: name in text
+158. 4.2c: name in text
+159. 4.2c: name in text
+160. 4.2c: name in text
+161. 4.2c: about the name
+162. 4.2c: drop the Queens nod
+163. 4.2c: APT type added
+164. 4.2c: APTs typed apart from plazas
+165. 4.2c: cost view wording
+166. 4.2c: cost legend wording
+167. 4.2c: block cost wording
+168. 4.2c: fee per use in restroom details
+169. 4.2c: fee helper
+170. 4.2c: List keeps the fee
+171. 4.2c: List CSV fee column
+172. 4.2c: procurement range in Numbers
+173. 4.2c: counts are peak-period
+174. 4.2c: method note on counts and residents
+175. 4.2c: passing or living here
+176. 4.2c: cap default 215
+177. 4.2c: DEFAULTS cap 215
+178. 4.2c: cap input 215
+179. 4.2c: cap in glossary
+180. 4.2c: cap in unknowns
+181. 4.2c: cap reason in unknowns
+182. 4.2c: cap in Numbers
+183. 4.2c: residents-only switch
+184. 4.2c: residents-only switch follows Foot traffic
+185. 4.2c: residents-only handler
+186. 4.2c: sensitivity row residents only
+187. 4.2c: sensitivity uses residents-only state
+188. 4.2c: sensitivity picks residents-only
+189. 4.2d: subway restrooms carry open/closed, rooms and MTA hours
+190. 4.2d: List shows subway status
+191. 4.2d: closed subway restrooms join the out-of-service list
+192. 4.2d: List count of subway restrooms
+193. 4.2d: List lead
+194. 4.2d: method note on subway sources
+195. 4.2d: sources row for subway restrooms
+196. 4.2d: open subway restrooms for the reopen count
+197. 4.2d: reopen count skips blocks an open subway restroom serves
+198. 5.0: restroom list setting (state)
+199. 5.0: prep swaps the restroom list
+200. 5.0: restroom attributes follow the list (and are not misaligned after a refresh)
+201. 5.0: no Throne double count
+202. 5.0: subway layer overlap with the list
+203. 5.0: allRest drops the subway copy of a listed station restroom
+204. 5.0: EDC type
+205. 5.0: Throne label
+206. 5.0: refresh keeps full hours and the new fields
+207. 5.0: hours whitespace normalised before evening()
+208. 5.0: refresh types Throne and APT rows
+209. 5.0: a refreshed list becomes the current list
+210. 5.0: restroom list control
+211. 5.0: List keeps every list row (1)
+212. 5.0: List keeps every list row (2)
+213. 5.0: List status as listed
+214. 5.0: Throne hours from the list
+215. 5.0: List accessibility in the City's names
+216. 5.0: List season and menstrual friendly
+217. 5.0: List accessibility filter
+218. 5.0: List columns
+219. 5.0: List cells
+220. 5.0: List accessibility control
+221. 5.0: List accessibility wiring
+222. 5.0: List count
+223. 5.0: List Throne count
+224. 5.0: List summary and change count
+225. 5.0: List CSV columns
+226. 5.0: v5 module
+227. 5.0: a list pulled earlier in this browser is restored
+228. 5.0: restroom list and update wiring
+229. 5.0: 'This tool, with my districts' keeps the memo districts and list record
+230. 5.0: saved packs keep their current list
+231. 5.0: Sources: keeping the data current
+232. 5.0: restroom list styles
+233. 5.0: shortlist headings read 'tier 4–5', not 'tier45'
+234. 5.0: List headings show their sort order
+235. 5.0: List sort control
+236. 5.0: List sort wiring
+237. 5.0: Display menu (light / dark)
+238. 5.0: Display settings applied at start
+239. 5.0: wrapping, sort chips, menus
+240. 5.0: stages 2-7 module and data
+241. 5.0: Throne cost $222,000 a unit-year (LL58 report p. 18), in code (3 places)
+242. 5.0: Throne cost $222,000 a unit-year, in text (5 places)
+243. 5.0: site check: route, open land-use action, pipeline, Parks sector, APT
+244. 5.0: area of identified need on every block
+245. 5.0: Closed & pipeline lens
+246. 5.0: Zoning routes lens
+247. 5.0: closed lens prep
+248. 5.0: closed lens shading
+249. 5.0: legends
+250. 5.0: closed lens overlay
+251. 5.0: panels
+252. 5.0: 20-minute band in the stats
+253. 5.0: headline slot
+254. 5.0: headline
+255. 5.0: story card headline
+256. 5.0: story card: old Queens CD 7 figure removed (1 Oct list)
+257. 5.0: Numbers: City comparison slot
+258. 5.0: Method: LL58 factors slot
+259. 5.0: fill the new page sections
+260. 5.0: Shortlists: closed by district, zoning shortlist, CD rollup
+261. 5.0: wire the new lists
+262. 5.0: mobility-device preset
+263. 5.0: About: the pitch
+264. 5.0: Throne check: cost and year 2
+265. 5.0: Unknowns: questions for the City
+266. 5.0: List keeps district and maintenance entity
+267. 5.0: List CSV: site ID, maintenance entity, planned opening (LL58 map fields)
+268. 5.0: stage styles
+269. 5.0a: pixel park header, pixel title and stamp
+270. 5.0a: park pixel styles
+271. 5.0b: Shortlists without the memo's 30 sites
+272. 5.0b: no memo table to fill
+273. 5.0b: memo record removed
+274. 5.0b: rail text
+275. 5.0b: How to use text
+276. 5.0b: worked example
+277. 5.0b: Throne districts lead
+278. 5.0b: story card
+279. 5.0b: list label
+280. 5.0b: list note
+281. 5.0b: launcher styles
+282. 5.0b: new name in the pixel title
+283. 5.0b: new name (6 places)
+284. 5.0b: name: aria-label="FLUSHING stands 
+285. 5.0b: name: grouped by the FLUSHING lett
+286. 5.0b: name: "FLUSHING-demand-map-offline
+287. 5.0b: name: <p class="k">FLUSHING site p
+288. 5.0b: name: Method and sources: FLUSHING
+289. 5.0b: name: <title>FLUSHING site profile
+290. 5.0b: name: `NYC-Flushing-Map-v${MAPV}
+291. 5.0b: name: `flushing-${BORO[bn]
+292. 5.0b: name: "That file is not an NYC Bat
+293. 5.0b: download names (9 places)
+294. 5.0b: download names (2) (2 places)
+295. 5.0b: review 2 styles
+296. 5.0c: City property and restaurant layers
+297. 5.0c: City property lens
+298. 5.0c: restaurants lens
+299. 5.0c: restaurants prep
+300. 5.0c: restaurants shading
+301. 5.0c: overlays
+302. 5.0c: panels
+303. 5.0c: legends
+304. 5.0c: site check
+305. 5.0c: sources
+306. 5.0c: data feeds
+307. 5.0c: live feeds have no file date
