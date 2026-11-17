@@ -1,0 +1,73 @@
+<section id="tab-about" class="card doc" hidden>
+<h2>About this sandbox</h2>
+
+<div class="v52lead">
+<h3>Where the City's report fits</h3>
+<p>The City's first Local Law 58 report (October 2026) calls its own analysis of underserved areas <b>preliminary</b>, and plans a more detailed method by 2030 (p. 11). This sandbox is one way to build that method, in the open, using the City's own restroom list.</p>
+<p>On the same list it comes within a few points of the City's published coverage figures; the side-by-side is at the end of the <a href="#numbers" data-tab="numbers">Numbers</a> page. Then it goes further: block by block, it shows <i>why</i> a place needs a restroom, where one is allowed to stand, and where the next ten should go.</p>
+</div>
+
+<div class="v51cards">
+<div><h3>What it does</h3><p>It asks three questions about every block in the city: where is a restroom needed, where could one go, and where should the next one go? Each block gets a need tier from 1 (lowest) to 5 (highest).</p></div>
+<div><h3>Why now</h3><p>Local Law 58 of 2025 calls for a citywide plan for public restrooms, with about 1,145 more needed by 2035. The law names what should guide siting, but not how to weigh it.</p></div>
+<div><h3>Why it's adjustable</h3><p>Every setting can be changed and the map updates right away, so an agency can test its own assumptions. It ranks candidate sites; it does not choose them.</p></div>
+</div>
+<p class="note" style="max-width:74ch"><b>Before you use a result:</b> tiers are estimates made from public data. Every site still needs a visit on the ground and agency approval.</p>
+
+<h3 class="sp">How a block gets its tier, 1 to 5</h3>
+<ol class="stepsgrid">
+<li><b>Is a restroom nearby?</b>Within a 5-minute walk of an open restroom, a block is served and gets no tier. From 5 to 10 minutes it is partly served, and its tier is lowered by one. Beyond 10 minutes it is a gap.</li>
+<li><b>Five reasons, each rated 1 to 5.</b>Each reason is measured with public data and turned into a rating from 1 to 5 using fixed cut-offs, the same in every district (table below).</li>
+<li><b>The strongest reason wins.</b>The block takes its highest rating. Nothing is added up or weighted, so one strong reason is enough, the way DOT's Pedestrian Demand Map lets one busy street set a corridor's class.</li>
+</ol>
+
+<div class="tw"><table class="t v52rt"><thead><tr><th>Reason</th><th>What is measured, and from where</th><th>Rated 5 when</th></tr></thead><tbody>
+<tr><td><span class="v52let" style="--c:#332288">F</span> Busy sidewalks</td><td>DOT's street type next to the block (Pedestrian Mobility Plan), from Global (busiest) to Baseline. A busy subway station within 150 m (MTA ridership) can raise it to 3 or 4.</td><td>a Global street, such as Times Square</td></tr>
+<tr><td><span class="v52let" style="--c:#AA4499">H</span> Vulnerable residents</td><td>Share of residents aged 65+, under 5, or under 65 with a disability (Census survey, by tract). A block within 800 m of a homeless drop-in centre is at least 4, whoever lives there (its own reason).</td><td>43% or more</td></tr>
+<tr><td><span class="v52let" style="--c:#B59A1E">I</span> Poverty</td><td>Share of residents below the federal poverty line (Census survey, by tract).</td><td>41% or more</td></tr>
+<tr><td><span class="v52let" style="--c:#2E8B7A">N</span> 311 reports</td><td>Public-urination complaints to 311 within 200 m, per year.</td><td>2.5 or more a year</td></tr>
+</tbody></table></div>
+
+<h3 class="sp">How the cut-offs are set</h3>
+<p>A block's tier comes from its strongest reason, so a reason that reaches 5 easily would end up setting most tiers. To hold every reason to the same bar, the default cut-offs are calibrated to DOT's Pedestrian Demand Map: each resident reason reaches each tier about as often as a city block sits on the matching DOT street class. Tier 5 is about as rare as a Global street (<b>2 in 100</b> blocks), tier 4 as rare as a Regional street, and so on.</p>
+<div class="v52bars" role="img" aria-label="Which reason sets the 609 tier-5 blocks on default settings: vulnerable residents 292; poverty 165; 311 reports 114; busy sidewalks 38. With the earlier round-number cut-offs there were 2,399: vulnerable residents 1,883; poverty 452; busy sidewalks 38; 311 reports 26.">
+<div class="v52bh">Which reason sets tier 5</div>
+<div class="v52br"><span>Default</span><div class="v52bt"><i style="--w:47.9%;--c:#AA4499" title="Vulnerable residents 292"></i><i style="--w:27.1%;--c:#B59A1E" title="Poverty 165"></i><i style="--w:6.2%;--c:#332288" title="Busy sidewalks 38"></i><i style="--w:18.7%;--c:#2E8B7A" title="311 reports 114"></i></div><b>609 blocks</b></div>
+<div class="v52br"><span>Round numbers</span><div class="v52bt"><i style="--w:78.5%;--c:#AA4499" title="Vulnerable residents 1,883"></i><i style="--w:18.8%;--c:#B59A1E" title="Poverty 452"></i><i style="--w:1.6%;--c:#332288" title="Busy sidewalks 38"></i><i style="--w:1.1%;--c:#2E8B7A" title="311 reports 26"></i></div><b>2,399 blocks</b></div>
+<p class="v52bk"><span><i style="background:#AA4499"></i>Vulnerable residents</span><span><i style="background:#B59A1E"></i>Poverty</span><span><i style="background:#332288"></i>Busy sidewalks</span><span><i style="background:#2E8B7A"></i>311 reports</span></p>
+</div>
+<p>The match is close, not exact. Resident shares are rounded to whole percentages and every block in a census tract has the same share, so vulnerable residents reach tier 3 a little more often than DOT's Neighborhood streets occur. And 65 in 100 blocks have no 311 complaint, so that reason can only be matched at tiers 4 and 5.</p>
+<p>An earlier version used round numbers (35% vulnerable residents, 30% poverty, 5 complaints a year for tier 5). On those, one reason set most tier-5 blocks, so they were replaced. You can still choose <b>Round numbers</b> under Settings › Tier thresholds to compare.</p>
+
+<h3 class="sp">Try it in a minute</h3>
+<ol>
+<li><b>Start with Sites.</b> The map opens on it: where a restroom is needed and where one can stand. The district's top 10 next sites are numbered on the map.</li>
+<li><b>Click a block.</b> See its tier, the reason behind it, and the math.</li>
+<li><b>Press FLUSH!</b> The map places restrooms one at a time on the neediest blocks where a unit is allowed, treating each as open before the next.</li>
+<li><b>Build the case.</b> Each lens answers one agency's question: zoning, flood risk, cleaning routes, who represents an area. Each opens with the question it answers.</li>
+<li><b>Tell us what's missing.</b> Know a public restroom the map doesn't? <a href="#" data-v52report="1">Report it</a>.</li>
+</ol>
+
+<h3 class="sp">What the law asks for, and where to find it here</h3>
+<div class="tw"><table class="t"><thead><tr><th>Local Law 58 asks the plan for</th><th>Where to look in FLUSHING</th></tr></thead><tbody>
+<tr><td>Underserved areas, by density, foot traffic, transit, walking distance, land use and equity</td><td>Need tiers on the Map; the Sites lens</td></tr>
+<tr><td>Recommended site types, with their challenges</td><td>Settings › Where can they go?, the site check and suggested restroom type</td></tr>
+<tr><td>Zoning, legal or policy changes</td><td>Zoning routes and Zoning &amp; BIDs lenses</td></tr>
+<tr><td>A plan for keeping restrooms clean and open</td><td>Operations &amp; maintenance lens</td></tr>
+<tr><td>Restrooms near transit and bike-share</td><td>Transit &amp; mobility and Co-location lenses</td></tr>
+<tr><td>A public map of existing and planned restrooms</td><td>Directory page; Closed now &amp; planned lens</td></tr>
+</tbody></table></div>
+
+<h3 class="sp">Why "FLUSHING"?</h3>
+<p class="acro v52acro" aria-label="F-L-U-S-H-I-N-G: Foot traffic, Land, Underserved, Site check, Human need, Income, Nuisance, Grade"><span style="--c:#332288"><b>F</b>oot traffic</span><span style="--c:#3E4C6D"><b>L</b>and</span><span style="--c:#6B7682"><b>U</b>nderserved</span><span style="--c:#009E73"><b>S</b>ite check</span><span style="--c:#AA4499"><b>H</b>uman need</span><span style="--c:#B59A1E"><b>I</b>ncome</span><span style="--c:#2E8B7A"><b>N</b>uisance</span><span style="--c:#CF4F20"><b>G</b>rade</span></p>
+<p>Each letter is one thing the map weighs, and each keeps its colour across the tool. The name also points to Flushing, Queens, at the end of the 7 train. The map covers all five boroughs.</p>
+
+<h3 class="sp">Help make the map better</h3>
+<p>The map only knows the restrooms on public lists. If you know a public restroom that's missing, closed, or listed wrong, <a href="#" data-v52report="1">send a report</a>. Each report is checked by a person before anything on the map changes, and this page stores nothing you type.</p>
+
+<h3 class="sp">Related work</h3>
+<p><a href="https://eco-trans.github.io/Bathroom-Deserts/">Bathroom Deserts</a> maps how easily New Yorkers can reach a usable restroom along real walking routes. It measures access; FLUSHING asks where the next restroom should go. The two can be read together.</p>
+
+<h3 class="sp">One file, works offline</h3>
+<p>The whole tool is a single HTML file with every district inside. It opens in any browser with no login, install or internet connection. The restroom list can be refreshed from NYC Open Data under Settings; other data is updated when the tool is rebuilt.</p>
+</section>

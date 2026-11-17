@@ -1,0 +1,348 @@
+/* ================= v5.2 ================= header art (sunrise / sunset) · tier colours · tiles · lens colours ·
+   selection ring · Pip · report form · top 10 · closed-by-district · notes · public-safety hiding */
+
+/* ---------- 0. things the public tool no longer offers ---------- */
+.v52gone { display: none !important; }
+
+/* ---------- 1. header art: one drawing, two times of day ---------- */
+:root {
+  --h-sky0:#8fcbe2;--h-sky1:#b4dbe5;--h-sky2:#f3dcc4;--h-sky3:#ffcf9f;--h-sky4:#ffbb80;--h-sun:#fff6d6;--h-sunrim:#ffe39a;--h-cloud:#ffffff;--h-cloud2:#fff3e4;
+  --h-far:#b5cbd9;--h-farwin:#e3eef4;--h-mid:#7d9db4;--h-midtop:#93b2c6;--h-midwin:#fff2bf;--h-midwin2:#d9eeb0;--h-midoff:#6b8ba2;--h-awn:#d9533b;--h-awn2:#2f8f6b;
+  --h-via:#2f4d5a;--h-via2:#4f7685;--h-train:#d5dde3;--h-trainst:#8a3fa8;--h-trainwin:#fff1b8;--h-traindoor:#aeb9c1;--h-bullet:#8a3fa8;--h-bulletw:#ffffff;
+  --h-front:#3d6274;--h-fronttop:#4f7688;--h-frontwin:#ffe9a8;--h-frontoff:#557b8d;
+  --h-walk:#e2dcd4;--h-walk2:#cbc4bb;--h-curb:#a29b93;--h-road:#5d6370;--h-lane:#f3f0e6;
+  --h-leaf:#4f9a5e;--h-leaf2:#74c27a;--h-trunk:#6b4a34;--h-post:#2c5e52;--h-lamp:#fff3b8;
+  --h-thg:#0f9d63;--h-thw:#fbfcfb;--h-ths:#d3dbd8;--h-thf:#c5cfcb;--h-thd:#eef2f0;--h-thlight:#7dffb8;--h-thsign:#1d2b2a;--h-isa:#1e6fd9;--h-thbase:#8c938f;
+  --h-skin1:#f1c9a5;--h-skin2:#8d5a3b;--h-skin3:#c58c62;--h-coat1:#d9533b;--h-coat2:#f2b134;--h-coat3:#2f6fb3;--h-coat4:#6b4fa3;--h-legs:#2a2f3a;--h-shoe:#1b1b1b;
+  --h-hair1:#3b2416;--h-hair2:#111;--h-hair3:#c98a3c;--h-pigeon:#8c93a3;--h-beak:#e0a33a;--h-ink:#17241f;--h-rule:#c9d6c2;
+  --h-pk:#1b1f2a;--h-pg:#9aa1b3;--h-pw:#ffffff;--h-po:#ff8a00;--h-py:#e8a53a;--h-pt:#5fa88a;--h-pv:#ff7a1a;--h-ps:#f4f4c8;--h-pl:#7e8597;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --h-sky0:#a993cb;--h-sky1:#c08fc3;--h-sky2:#d690b7;--h-sky3:#e6a0ad;--h-sky4:#f0b2a4;--h-sun:#fffaf3;--h-sunrim:#ffe0e8;--h-cloud:#f4c6dc;--h-cloud2:#e8b0cf;
+  --h-far:#d987ab;--h-farwin:#f7bccd;--h-mid:#b5628f;--h-midtop:#c4729c;--h-midwin:#ffd47e;--h-midwin2:#cde28a;--h-midoff:#a25582;--h-awn:#b8443a;--h-awn2:#256f56;
+  --h-via:#12313a;--h-via2:#24505c;--h-train:#9b97b5;--h-trainst:#7d3c9c;--h-trainwin:#ffe08a;--h-traindoor:#7f7b98;
+  --h-front:#0e2a31;--h-fronttop:#17404a;--h-frontwin:#ecdf86;--h-frontoff:#1c3d46;
+  --h-walk:#6e5a77;--h-walk2:#5d4b67;--h-curb:#43374e;--h-road:#2d2939;--h-lane:#c9b6d6;
+  --h-leaf:#2e5d4b;--h-leaf2:#43815f;--h-trunk:#3c2b2c;--h-post:#173a35;--h-lamp:#ffe58a;
+  --h-thg:#1fc07e;--h-thw:#f4f1f6;--h-ths:#c9c1d2;--h-thf:#b7aec3;--h-thd:#e7e1ec;--h-thlight:#a6ffd0;--h-thsign:#1d2230;--h-isa:#3d86f0;--h-thbase:#4c4358;
+  --h-skin1:#e8b997;--h-skin2:#7b4d33;--h-skin3:#b47d57;--h-coat1:#c4483a;--h-coat2:#e09f2f;--h-coat3:#2b5d98;--h-coat4:#5d4590;--h-legs:#1b1d27;--h-shoe:#0d0d12;
+  --h-hair1:#2a1a10;--h-hair2:#0b0b0b;--h-hair3:#a8742f;--h-pigeon:#7d7f93;--h-beak:#d9952f;
+} }
+:root[data-theme="dark"] {
+  --h-sky0:#a993cb;--h-sky1:#c08fc3;--h-sky2:#d690b7;--h-sky3:#e6a0ad;--h-sky4:#f0b2a4;--h-sun:#fffaf3;--h-sunrim:#ffe0e8;--h-cloud:#f4c6dc;--h-cloud2:#e8b0cf;
+  --h-far:#d987ab;--h-farwin:#f7bccd;--h-mid:#b5628f;--h-midtop:#c4729c;--h-midwin:#ffd47e;--h-midwin2:#cde28a;--h-midoff:#a25582;--h-awn:#b8443a;--h-awn2:#256f56;
+  --h-via:#12313a;--h-via2:#24505c;--h-train:#9b97b5;--h-trainst:#7d3c9c;--h-trainwin:#ffe08a;--h-traindoor:#7f7b98;
+  --h-front:#0e2a31;--h-fronttop:#17404a;--h-frontwin:#ecdf86;--h-frontoff:#1c3d46;
+  --h-walk:#6e5a77;--h-walk2:#5d4b67;--h-curb:#43374e;--h-road:#2d2939;--h-lane:#c9b6d6;
+  --h-leaf:#2e5d4b;--h-leaf2:#43815f;--h-trunk:#3c2b2c;--h-post:#173a35;--h-lamp:#ffe58a;
+  --h-thg:#1fc07e;--h-thw:#f4f1f6;--h-ths:#c9c1d2;--h-thf:#b7aec3;--h-thd:#e7e1ec;--h-thlight:#a6ffd0;--h-thsign:#1d2230;--h-isa:#3d86f0;--h-thbase:#4c4358;
+  --h-skin1:#e8b997;--h-skin2:#7b4d33;--h-skin3:#b47d57;--h-coat1:#c4483a;--h-coat2:#e09f2f;--h-coat3:#2b5d98;--h-coat4:#5d4590;--h-legs:#1b1d27;--h-shoe:#0d0d12;
+  --h-hair1:#2a1a10;--h-hair2:#0b0b0b;--h-hair3:#a8742f;--h-pigeon:#7d7f93;--h-beak:#d9952f;
+}
+.h-sky0{fill:var(--h-sky0)}.h-sky1{fill:var(--h-sky1)}.h-sky2{fill:var(--h-sky2)}.h-sky3{fill:var(--h-sky3)}.h-sky4{fill:var(--h-sky4)}.h-sun{fill:var(--h-sun)}.h-sunrim{fill:var(--h-sunrim)}.h-cloud{fill:var(--h-cloud)}.h-cloud2{fill:var(--h-cloud2)}
+.h-far{fill:var(--h-far)}.h-farwin{fill:var(--h-farwin)}.h-mid{fill:var(--h-mid)}.h-midtop{fill:var(--h-midtop)}.h-midwin{fill:var(--h-midwin)}.h-midwin2{fill:var(--h-midwin2)}.h-midoff{fill:var(--h-midoff)}.h-awn{fill:var(--h-awn)}.h-awn2{fill:var(--h-awn2)}
+.h-via{fill:var(--h-via)}.h-via2{fill:var(--h-via2)}.h-train{fill:var(--h-train)}.h-trainst{fill:var(--h-trainst)}.h-trainwin{fill:var(--h-trainwin)}.h-traindoor{fill:var(--h-traindoor)}.h-bullet{fill:var(--h-bullet)}.h-bulletw{fill:var(--h-bulletw)}
+.h-front{fill:var(--h-front)}.h-fronttop{fill:var(--h-fronttop)}.h-frontwin{fill:var(--h-frontwin)}.h-frontoff{fill:var(--h-frontoff)}
+.h-walk{fill:var(--h-walk)}.h-walk2{fill:var(--h-walk2)}.h-curb{fill:var(--h-curb)}.h-road{fill:var(--h-road)}.h-lane{fill:var(--h-lane)}
+.h-leaf{fill:var(--h-leaf)}.h-leaf2{fill:var(--h-leaf2)}.h-trunk{fill:var(--h-trunk)}.h-post{fill:var(--h-post)}.h-lamp{fill:var(--h-lamp)}
+.h-thg{fill:var(--h-thg)}.h-thw{fill:var(--h-thw)}.h-ths{fill:var(--h-ths)}.h-thf{fill:var(--h-thf)}.h-thd{fill:var(--h-thd)}.h-thlight{fill:var(--h-thlight)}.h-thsign{fill:var(--h-thsign)}.h-isa{fill:var(--h-isa)}.h-thbase{fill:var(--h-thbase)}
+.h-skin1{fill:var(--h-skin1)}.h-skin2{fill:var(--h-skin2)}.h-skin3{fill:var(--h-skin3)}.h-coat1{fill:var(--h-coat1)}.h-coat2{fill:var(--h-coat2)}.h-coat3{fill:var(--h-coat3)}.h-coat4{fill:var(--h-coat4)}.h-legs{fill:var(--h-legs)}.h-shoe{fill:var(--h-shoe)}
+.h-hair1{fill:var(--h-hair1)}.h-hair2{fill:var(--h-hair2)}.h-hair3{fill:var(--h-hair3)}.h-pigeon{fill:var(--h-pigeon)}.h-beak{fill:var(--h-beak)}.h-ink{fill:var(--h-ink)}.h-rule{fill:var(--h-rule)}
+.h-pk{fill:var(--h-pk)}.h-pg{fill:var(--h-pg)}.h-pw{fill:var(--h-pw)}.h-po{fill:var(--h-po)}.h-py{fill:var(--h-py)}.h-pt{fill:var(--h-pt)}.h-pv{fill:var(--h-pv)}.h-ps{fill:var(--h-ps)}.h-pl{fill:var(--h-pl)}
+.top > .hero { background: var(--h-sky2); }
+.hero .stripes { display: none !important; }
+.hero .v52scene .clouds { animation-name: v52drift; }
+@keyframes v52drift { from { transform: translateX(0); } to { transform: translateX(-240px); } }
+.ptitle.v52title { height: 64px; }
+@media (max-width: 700px) { .ptitle.v52title { height: 46px; } }
+.stamp .si svg.v52sign { width: 78px; margin: 2px auto 6px; fill: none; }
+@media (max-width: 700px) { .stamp .si svg.v52sign { width: 52px; } }
+
+/* ---------- 2. tier colours: tier 5 is always the strongest; served blocks have no fill ---------- */
+:root { --g0: transparent; --g1: #fde2c8; --g2: #f9b57e; --g3: #ee7f3f; --g4: #c54b1e; --g5: #7d1d06;
+  --gi0: #111418; --gi1: #111418; --gi2: #111418; --gi3: #111418; --gi4: #fff; --gi5: #fff; --v52sel: #e0001b; }
+:root[data-palette="blue"] { --g0: transparent; --g1: #c7e9b4; --g2: #7fcdbb; --g3: #41b6c4; --g4: #2a79af; --g5: #253494; --gi3: #111418; --gi4: #fff; --gi5: #fff; --v52sel: #e0001b; }
+:root[data-palette="grey"] { --g0: transparent; --g1: #e0e0e0; --g2: #b3b3b3; --g3: #808080; --g4: #4d4d4d; --g5: #000000;
+  --gi0: #111; --gi1: #111; --gi2: #111; --gi3: #000; --gi4: #fff; --gi5: #fff; --yes: #f2f2f2; --mid: #9a9a9a; --no: #1a1a1a; --v52sel: #000; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --g0: transparent; --g1: #4a2f22; --g2: #7a3a1a; --g3: #a3461c; --g4: #e0612a; --g5: #ff4a24;
+    --gi0: #fff; --gi1: #fff; --gi2: #fff; --gi3: #fff; --gi4: #111418; --gi5: #111418; --v52sel: #ff2d4a; }
+  :root:not([data-theme="light"])[data-palette="blue"] { --g0: transparent; --g1: #1b2f4d; --g2: #1e4a7a; --g3: #1f6fae; --g4: #2e95d6; --g5: #5ad1ff;
+    --gi3: #fff; --gi4: #111418; --gi5: #111418; --yes: #1b2f4d; --mid: #1f6fae; --no: #5ad1ff; --v52sel: #ff2d4a; }
+  :root:not([data-theme="light"])[data-palette="grey"] { --g0: transparent; --g1: #333333; --g2: #555555; --g3: #808080; --g4: #b0b0b0; --g5: #f0f0f0;
+    --gi0: #fff; --gi1: #fff; --gi2: #fff; --gi3: #000; --gi4: #111; --gi5: #111; --v52sel: #fff; }
+}
+:root[data-theme="dark"] { --g0: transparent; --g1: #4a2f22; --g2: #7a3a1a; --g3: #a3461c; --g4: #e0612a; --g5: #ff4a24;
+  --gi0: #fff; --gi1: #fff; --gi2: #fff; --gi3: #fff; --gi4: #111418; --gi5: #111418; --v52sel: #ff2d4a; }
+:root[data-theme="dark"][data-palette="blue"] { --g0: transparent; --g1: #1b2f4d; --g2: #1e4a7a; --g3: #1f6fae; --g4: #2e95d6; --g5: #5ad1ff;
+  --gi3: #fff; --gi4: #111418; --gi5: #111418; --yes: #1b2f4d; --mid: #1f6fae; --no: #5ad1ff; --v52sel: #ff2d4a; }
+:root[data-theme="dark"][data-palette="grey"] { --g0: transparent; --g1: #333333; --g2: #555555; --g3: #808080; --g4: #b0b0b0; --g5: #f0f0f0;
+  --gi0: #fff; --gi1: #fff; --gi2: #fff; --gi3: #000; --gi4: #111; --gi5: #111; --v52sel: #fff; }
+/* served blocks: no fill, a clear outline */
+svg#map path.b[fill="var(--g0)"] { stroke: var(--muted); stroke-opacity: .55; }
+
+/* ---------- 3. selected block: a ring you can't lose ---------- */
+svg#map path.b.sel { stroke: transparent !important; }
+svg#map .v52r0 { stroke: #000; stroke-width: 9px; stroke-opacity: .55; stroke-linejoin: round; }
+svg#map .v52r1 { stroke: #fff; stroke-width: 6px; stroke-linejoin: round; }
+svg#map .v52r2 { stroke: var(--v52sel); stroke-width: 3px; stroke-linejoin: round; }
+@media (prefers-reduced-motion: no-preference) { svg#map .v52r2 { animation: v52ring 1.6s ease-in-out 2; } }
+@keyframes v52ring { 50% { stroke-width: 5px; } }
+svg#map .v52rc.v52r2 { stroke-dasharray: 10 5; }
+
+/* ---------- 4. score tiles ---------- */
+#stat .ragw i { font-style: normal; margin-right: 2px; }
+#stat > div.unr { background: var(--panel); border-style: dashed; }
+#stat > div.unr b { color: var(--ink); }
+:root[data-palette="grey"] #stat > div.rag-good { background: var(--panel); border: 2px solid var(--ink); }
+:root[data-palette="grey"] #stat > div.rag-fair { background: repeating-linear-gradient(135deg, transparent 0 6px, color-mix(in srgb, var(--ink) 9%, transparent) 6px 8px); border: 2px dashed var(--ink); }
+:root[data-palette="grey"] #stat > div.rag-poor { background: color-mix(in srgb, var(--ink) 14%, var(--panel)); border: 3px double var(--ink); }
+:root[data-palette="grey"] #stat .rag-good .ragw { background: var(--panel); color: var(--ink); border: 1.5px solid var(--ink); }
+:root[data-palette="grey"] #stat .rag-fair .ragw { background: color-mix(in srgb, var(--ink) 45%, var(--panel)); color: var(--panel); }
+:root[data-palette="grey"] #stat .rag-poor .ragw { background: var(--ink); color: var(--panel); }
+.ragkey table td[rowspan] { vertical-align: middle; }
+
+/* ---------- 5. lens bar: Start here, then build the case; one colour per lens, by family ---------- */
+:root {
+  --lz-siting:#c2410c; --lz-coverage:#b45309; --lz-closed:#9a3412; --lz-food:#be3455; --lz-equity:#8a5a00;
+  --lz-zoning:#15803d; --lz-zroute:#166534; --lz-cityprop:#4d7c0f; --lz-landmarks:#047857; --lz-flood:#0e7490; --lz-publand:#1e6b52; --lz-transit:#0f766e;
+  --lz-maint:#1d4ed8; --lz-coloc:#0369a1; --lz-reps:#a21caf; --lz-vuln:#8a6a00; --ln-start:#c2410c;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --lz-siting:#ff8a5b; --lz-coverage:#f8a65a; --lz-closed:#f59a7a; --lz-food:#ff8fa3; --lz-equity:#e8b45a;
+  --lz-zoning:#5fd38a; --lz-zroute:#86e0a6; --lz-cityprop:#a8d65a; --lz-landmarks:#4fd1a5; --lz-flood:#5ccfe6; --lz-publand:#7fdcc0; --lz-transit:#4fd6c8;
+  --lz-maint:#8fb4ff; --lz-coloc:#6cc4f0; --lz-reps:#ef8ff5; --lz-vuln:#e6c74c; --ln-start:#ff8a5b; } }
+:root[data-theme="dark"] {
+  --lz-siting:#ff8a5b; --lz-coverage:#f8a65a; --lz-closed:#f59a7a; --lz-food:#ff8fa3; --lz-equity:#e8b45a;
+  --lz-zoning:#5fd38a; --lz-zroute:#86e0a6; --lz-cityprop:#a8d65a; --lz-landmarks:#4fd1a5; --lz-flood:#5ccfe6; --lz-publand:#7fdcc0; --lz-transit:#4fd6c8;
+  --lz-maint:#8fb4ff; --lz-coloc:#6cc4f0; --lz-reps:#ef8ff5; --lz-vuln:#e6c74c; --ln-start:#ff8a5b; }
+:root[data-palette="grey"] { --lz-siting:var(--ink); --lz-coverage:var(--ink); --lz-closed:var(--ink); --lz-food:var(--ink); --lz-equity:var(--ink); --lz-zoning:var(--ink); --lz-zroute:var(--ink); --lz-cityprop:var(--ink); --lz-landmarks:var(--ink); --lz-flood:var(--ink); --lz-publand:var(--ink); --lz-transit:var(--ink); --lz-maint:var(--ink); --lz-coloc:var(--ink); --lz-reps:var(--ink); --lz-vuln:var(--ink); --ln-start:var(--ink); }
+.lgrp[data-g="start"] { --lc: var(--ln-start); }
+.lenstabs button[data-lens="siting"] { --lc: var(--lz-siting); } .lenstabs button[data-lens="coverage"] { --lc: var(--lz-coverage); } .lenstabs button[data-lens="closed"] { --lc: var(--lz-closed); }
+.lenstabs button[data-lens="food"] { --lc: var(--lz-food); } .lenstabs button[data-lens="equity"] { --lc: var(--lz-equity); } .lenstabs button[data-lens="zoning"] { --lc: var(--lz-zoning); }
+.lenstabs button[data-lens="zroute"] { --lc: var(--lz-zroute); } .lenstabs button[data-lens="cityprop"] { --lc: var(--lz-cityprop); } .lenstabs button[data-lens="landmarks"] { --lc: var(--lz-landmarks); }
+.lenstabs button[data-lens="flood"] { --lc: var(--lz-flood); } .lenstabs button[data-lens="publand"] { --lc: var(--lz-publand); } .lenstabs button[data-lens="transit"] { --lc: var(--lz-transit); }
+.lenstabs button[data-lens="maint"] { --lc: var(--lz-maint); } .lenstabs button[data-lens="coloc"] { --lc: var(--lz-coloc); } .lenstabs button[data-lens="reps"] { --lc: var(--lz-reps); } .lenstabs button[data-lens="vuln"] { --lc: var(--lz-vuln); }
+/* the map paint of each lens uses its own button colour */
+:root:not([data-palette="grey"]) { --lc-lm: var(--lz-landmarks); --lc-fl: var(--lz-flood); --lc-tr: var(--lz-transit); --lc-co: var(--lz-coloc); --lc-vu: var(--lz-vuln); --lc-zo: var(--lz-zoning); }
+/* grey palette: lenses differ by shape of their dot, not colour */
+:root[data-palette="grey"] .lgrp[data-g="need"] button::before { border-radius: 0; }
+:root[data-palette="grey"] .lgrp[data-g="land"] button::before { border-radius: 0; transform: rotate(45deg) scale(.85); }
+:root[data-palette="grey"] .lgrp[data-g="ops"] button::before { border-radius: 0; clip-path: polygon(50% 0, 100% 100%, 0 100%); }
+:root[data-palette="grey"] .lgrp[data-g="ppl"] button::before { background: transparent; border: 2px solid currentColor; box-sizing: border-box; }
+.lgrp[data-g="start"] { margin-right: 6px; }
+.lgrp[data-g="start"] .lgl { color: var(--ln-start); font-weight: 800; }
+.lgrp[data-g="start"] button { font-weight: 800 !important; box-shadow: 0 0 0 3px color-mix(in srgb, var(--ln-start) 22%, transparent), 0 3px 0 var(--hard) !important; }
+.v52case { font-size: 11px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin-right: 8px; padding-left: 10px; border-left: 2px solid var(--line); white-space: nowrap; cursor: help; align-self: center; }
+
+/* ---------- 6. the changed-view tag, pin mode ---------- */
+#mapbox { position: relative; }
+.v52tag { position: absolute; left: 8px; top: 8px; z-index: 3; max-width: calc(100% - 16px); background: var(--panel); color: var(--ink); border: 2px solid var(--ink); border-radius: 8px; padding: 4px 9px; font-size: 12.5px; line-height: 1.35; box-shadow: 0 2px 0 var(--hard); pointer-events: none; }
+.v52tag b { text-transform: uppercase; letter-spacing: .05em; font-size: 11.5px; }
+.v52pinning svg#map, .v52pinning svg#map * { cursor: crosshair !important; }
+.v52pinning .v52tag { border-color: var(--v52sel); }
+
+/* ---------- 7. top 10, help button, FLUSH! ---------- */
+.v52top { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line); }
+.v52toph { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+.v52toph b { font-family: var(--display); text-transform: uppercase; letter-spacing: .04em; font-size: 13px; }
+.v52top ol { margin: 0 0 8px; padding-left: 26px; display: grid; gap: 5px; }
+.v52top li { line-height: 1.35; }
+.v52top li .gpill { margin: 0 4px; font-size: 11px; padding: 1px 7px; border-radius: 999px; font-weight: 700; white-space: nowrap; }
+.v52top li .small { color: var(--muted); }
+.btn.flush { font-family: var(--display); letter-spacing: .06em; font-weight: 800; }
+.v52help { white-space: nowrap; }
+
+/* ---------- 8. Pip ---------- */
+.v52pip { position: fixed; left: 50%; bottom: 14px; transform: translateX(-50%); z-index: 60; width: min(780px, calc(100vw - 24px)); }
+.v52pbox { position: relative; display: grid; grid-template-columns: 112px 1fr; gap: 16px; align-items: start; background: #fbfaf5; color: #1a1f2b;
+  border: 4px solid #2a3142; border-radius: 14px; padding: 14px 16px 12px; box-shadow: inset 0 0 0 3px #fbfaf5, inset 0 0 0 5px #7aa6c8, 0 8px 0 rgba(0,0,0,.25); }
+.v52pface { background: #dcebf3; border: 3px solid #2a3142; border-radius: 10px; padding: 8px 6px 4px; text-align: center; }
+.v52pface svg.v52pipart { width: 92px; height: auto; display: block; margin: 0 auto; image-rendering: pixelated; }
+.v52pface span { display: inline-block; margin-top: 4px; font: 800 12px/1 var(--display); letter-spacing: .14em; background: #2a3142; color: #fff; padding: 3px 8px; border-radius: 4px; }
+.v52ptext h3 { margin: 2px 34px 6px 0; font: 800 16px/1.25 var(--display); letter-spacing: .02em; text-transform: none; }
+.v52ptext p { margin: 0 0 10px; font-size: 15.5px; line-height: 1.5; min-height: 4.5em; }
+.v52ptext p.typing::after { content: "▌"; margin-left: 1px; animation: v52blink .7s steps(1) infinite; }
+.v52pbtns { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.v52pbtns .btn { color: #1a1f2b; background: #fff; }
+.v52pbtns .btn.pri { background: #1a73e0; color: #fff; }
+.v52pbtns .btn.act { background: #fff4d6; }
+.v52px { position: absolute; top: 8px; right: 10px; font-size: 18px; color: #1a1f2b !important; background: none !important; border: 0 !important; box-shadow: none !important; }
+.v52pdots { position: absolute; right: 46px; top: 18px; margin: 0; display: flex; gap: 5px; }
+.v52pdots i { width: 7px; height: 7px; border-radius: 50%; background: #c9d1dc; }
+.v52pdots i.on { background: #2a3142; }
+@keyframes v52blink { 50% { opacity: 0; } }
+@media (max-width: 640px) { .v52pbox { grid-template-columns: 64px 1fr; gap: 10px; padding: 10px; } .v52pface svg.v52pipart { width: 52px; } .v52ptext p { font-size: 14.5px; min-height: 0; } }
+@media (prefers-reduced-motion: reduce) { .v52ptext p.typing::after { animation: none; } }
+
+/* ---------- 9. report form ---------- */
+.v52modal { position: fixed; inset: 0; z-index: 70; background: rgba(10,14,20,.55); display: grid; place-items: center; padding: 16px; overflow: auto; }
+.v52modal[hidden] { display: none; }
+.v52mbox { position: relative; background: var(--panel); color: var(--ink); width: min(640px, 100%); border: 3px solid var(--ink); border-radius: 14px; padding: 18px 20px; box-shadow: 0 8px 0 rgba(0,0,0,.25); max-height: calc(100vh - 32px); overflow: auto; }
+.v52mbox h2 { margin: 0 34px 6px 0; }
+.v52mx { position: absolute; right: 12px; top: 10px; font-size: 20px; border: 0 !important; box-shadow: none !important; background: none !important; }
+#v52rf fieldset { border: 1px solid var(--line); border-radius: 10px; margin: 10px 0; padding: 8px 12px 10px; display: grid; gap: 7px; }
+#v52rf legend { font-weight: 700; padding: 0 4px; }
+#v52rf label { display: grid; gap: 3px; font-size: 14px; }
+#v52rf label:has(> input[type="radio"]), #v52rf label.ck { display: flex; align-items: center; gap: 8px; }
+#v52rf input:not([type="radio"]):not([type="checkbox"]), #v52rf select, #v52rf textarea { font: inherit; padding: 6px 8px; border: 1px solid var(--line); border-radius: 7px; background: var(--panel); color: var(--ink); width: 100%; box-sizing: border-box; }
+.v52reportbar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin: 6px 0 12px; }
+.v52modalopen body { overflow: hidden; }
+.v52wrong { margin-top: 10px !important; }
+
+/* ---------- 10. notes dropdown on the Restrooms page ---------- */
+.v52notes { margin: 8px 0 4px; font-size: 13.5px; }
+.v52notes summary { cursor: pointer; }
+.v52notes summary::after { content: " ▾"; color: var(--muted); }
+.v52notes[open] summary::after { content: " ▴"; }
+.v52notes p { margin: 6px 0 0 14px; max-width: 95ch; }
+.v52hint { margin: 2px 0 10px; }
+
+/* ---------- 11. closed restrooms by district ---------- */
+:root { --cl-ok: #2e8b57; --cl-mid: #e0b000; --cl-bad: #c8102e; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --cl-ok: #5fcf8f; --cl-mid: #f2c94c; --cl-bad: #ff6b6b; } }
+:root[data-theme="dark"] { --cl-ok: #5fcf8f; --cl-mid: #f2c94c; --cl-bad: #ff6b6b; }
+:root[data-palette="grey"] { --cl-ok: #e6e6e6; --cl-mid: #9a9a9a; --cl-bad: #222; }
+.v52clmap { display: grid; grid-template-columns: minmax(260px, 520px) 1fr; gap: 16px; align-items: start; }
+@media (max-width: 760px) { .v52clmap { grid-template-columns: 1fr; } }
+.v52clmap path { stroke: var(--panel); stroke-width: 3; cursor: pointer; }
+.v52clmap path.v52cl-ok, .v52clkey i.v52cl-ok { fill: var(--cl-ok); background: var(--cl-ok); }
+.v52clmap path.v52cl-mid, .v52clkey i.v52cl-mid { fill: var(--cl-mid); background: var(--cl-mid); }
+.v52clmap path.v52cl-bad, .v52clkey i.v52cl-bad { fill: var(--cl-bad); background: var(--cl-bad); }
+.v52clmap path.few { fill-opacity: .55; stroke-dasharray: 4 3; stroke: var(--ink); stroke-width: 1.2; }
+.v52clmap path:hover { stroke: var(--ink); stroke-width: 3; }
+.v52clkey { display: grid; gap: 6px; font-size: 13.5px; }
+.v52clkey span { display: flex; align-items: center; gap: 8px; }
+.v52clkey i { width: 16px; height: 16px; border-radius: 4px; border: 1px solid var(--ink); flex: none; }
+.v52clkey i.few { opacity: .55; border-style: dashed; }
+.v52chip { display: inline-block; padding: 1px 8px; border-radius: 999px; font-weight: 700; font-size: 12.5px; white-space: nowrap; color: #111; }
+.v52chip.v52cl-ok { background: var(--cl-ok); } .v52chip.v52cl-mid { background: var(--cl-mid); } .v52chip.v52cl-bad { background: var(--cl-bad); color: #fff; }
+:root[data-palette="grey"] .v52chip.v52cl-bad { color: #fff; }
+
+/* ---------- 12. About and FAQ ---------- */
+.v52lead { border-left: 5px solid var(--accent); background: color-mix(in srgb, var(--accent) 7%, var(--panel)); border-radius: 0 12px 12px 0; padding: 12px 18px 4px; margin: 6px 0 18px; max-width: 80ch; }
+.v52lead h3 { margin: 0 0 6px; font-family: var(--display); text-transform: uppercase; letter-spacing: .04em; font-size: 15px; }
+.v52let { display: inline-grid; place-items: center; width: 20px; height: 20px; border-radius: 4px; background: var(--c); color: #fff; font-weight: 800; font-size: 12px; margin-right: 6px; vertical-align: -3px; }
+.v52rt td:first-child { white-space: nowrap; font-weight: 600; }
+.v52bars { max-width: 760px; margin: 10px 0 14px; padding: 12px 14px; border: 1px solid var(--line); border-radius: 12px; }
+.v52bh { font-weight: 700; margin-bottom: 8px; }
+.v52br { display: grid; grid-template-columns: 120px 1fr 96px; gap: 10px; align-items: center; margin: 6px 0; font-size: 13.5px; }
+.v52bt { display: flex; height: 22px; border-radius: 6px; overflow: hidden; border: 1px solid var(--line); }
+.v52bt i { width: var(--w); background: var(--c); }
+.v52bk { display: flex; flex-wrap: wrap; gap: 14px; margin: 8px 0 0; font-size: 12.5px; }
+.v52bk span { display: inline-flex; align-items: center; gap: 6px; }
+.v52bk i { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+.v52acro { margin: 4px 0 10px !important; }
+.v52terms { display: grid; gap: 0; }
+.faq .v52terms details { border-bottom: 1px solid var(--line); }
+.faq .v52terms summary { font-weight: 600; }
+.v52unk { margin: 6px 0 18px; max-width: 86ch; }
+.v52unk ul { margin: 6px 0 2px; padding-left: 20px; }
+.v52why { max-width: 80ch; }
+
+/* phones: under the short scene, the header continues as sidewalk, not grass */
+@media (max-width: 700px) { .top { background: var(--h-walk) !important; } }
+.v52mailfb { display: block; margin-top: 6px; padding: 8px 10px; border: 1px dashed var(--line); border-radius: 8px; line-height: 1.6; }
+
+/* ---------- 13. layout: sticky search row, docked map, split-screen and narrow windows ---------- */
+.v52tools { background: var(--panel); }
+@media (min-width: 900px) {
+  /* the search and scenario rows stay visible under the lens bar however far you scroll */
+  :root.v52 .v51mapcard .v52tools { position: sticky; top: var(--lbh, 0px); z-index: 30; margin: -2px -4px 0; padding: 2px 4px 0; border-radius: 10px 10px 0 0; }
+  /* scrolling settles on the docked map, where the strip, the toolbar, the map and the legend all fit */
+  html:has(#tab-map:not([hidden])) { scroll-snap-type: y proximity; }
+  :root.v52 #tab-map .app { scroll-snap-align: start; scroll-margin-top: calc(var(--lbh, 0px) + 8px); }
+  :root.v52 .top { scroll-snap-align: start; }
+}
+@media (min-width: 1200px) {
+  /* nothing below the map to scroll into, so the docked view is also the bottom of the page */
+  :root.v52 #tab-map .app { height: calc(100vh - var(--lbh, 120px) - 12px); margin-bottom: 0; }
+}
+/* split screen (900–1199 px): the one-screen layout, with a narrower panel */
+@media (min-width: 900px) and (max-width: 1199px) {
+  :root.v52 .lenscard { position: sticky; top: 0; z-index: 40; padding-top: 8px !important; padding-bottom: 8px !important; box-shadow: 0 6px 18px rgba(0, 0, 0, .08); }
+  :root.v52 .lenstabs { flex-direction: row !important; flex-wrap: wrap; gap: 6px 14px !important; }
+  :root.v52 .lgrp { gap: 4px !important; }
+  :root.v52 .lgrp .lgl { width: auto; margin-right: 3px !important; font-size: 10px !important; }
+  :root.v52 .lenstabs button { padding: 3px 8px !important; font-size: 12px !important; gap: 4px !important; }
+  :root.v52 .lensbar .lensq { display: none; }
+  :root.v52 .v52case { font-size: 10px; margin-right: 4px; padding-left: 6px; }
+  :root.v52 .v51dock { grid-template-columns: minmax(220px, 280px) minmax(0, 1fr); gap: 6px 10px; padding-bottom: 8px; }
+  :root.v52 .v51dock #stat { grid-template-columns: repeat(5, minmax(0, 1fr)) !important; gap: 5px !important; }
+  :root.v52 .v51dock #stat > div { padding: 3px 7px !important; }
+  :root.v52 .v51dock #stat > div b { font-size: 17px !important; }
+  :root.v52 .v51dock #stat .ragw { font-size: 9.5px !important; margin-left: 3px !important; padding: 1px 4px !important; }
+  :root.v52 .v51dock #stat > div > span { font-size: 10.5px !important; -webkit-line-clamp: 1; }
+  :root.v52 #tab-map .app { display: grid !important; grid-template-columns: minmax(0, 1fr) 330px; gap: 12px; height: calc(100vh - var(--lbh, 160px) - 12px); min-height: 460px; align-items: stretch; margin-top: 8px; }
+  :root.v52 #tab-map .main { display: flex; flex-direction: column; min-height: 0; min-width: 0; order: 0; grid-column: 1; grid-row: 1; }
+  :root.v52 #side { grid-column: 2 !important; grid-row: 1; display: block !important; overflow-y: auto; min-height: 0; padding-right: 2px; scrollbar-gutter: stable; }
+  :root.v52 #side > .card, :root.v52 #side > * { margin: 0 0 10px !important; }
+  :root.v52 .v51mapcard { flex: 1; display: flex; flex-direction: column; min-height: 0; margin: 0 !important; padding: 10px 12px !important; }
+  :root.v52 .v51mapcard .find { margin: 0 0 6px; gap: 5px; }
+  :root.v52 .v51mapcard .find input { padding: 5px 9px; font-size: 13.5px; min-width: 0; flex: 1 1 140px; }
+  :root.v52 .v51mapcard .find .btn, :root.v52 .v51mapcard .seg button { padding: 4px 9px !important; font-size: 12.5px !important; }
+  :root.v52 .v51mapcard #qmsg:empty { display: none; }
+  :root.v52 .v51mapcard .bar2 { display: flex !important; flex-wrap: wrap; align-items: center; gap: 4px 10px; margin: 0 0 6px; font-size: 12.5px; }
+  :root.v52 .v51mapcard .scen { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; margin: 0; }
+  :root.v52 .v51mapcard .mapbox { flex: 1; min-height: 0; position: relative; }
+  :root.v52 .v51mapcard #map { position: absolute; inset: 0; width: 100%; height: 100% !important; }
+  :root.v52 .v51mapcard .legend { flex: none; margin-top: 6px; font-size: 11.5px; line-height: 1.3; gap: 2px 10px; }
+  :root.v52 .v51key { margin-top: 4px; padding: 4px 8px; font-size: 12px; }
+  :root.v52 .side.hassel .o-detail { order: 2; }
+}
+/* narrow windows (under 900 px, phones and half of a laptop): each lens group is one swipeable row, so the lens bar is
+   short and the map comes sooner */
+@media (max-width: 899px) {
+  :root.v52 .lenstabs { flex-direction: column !important; gap: 6px !important; }
+  :root.v52 .lgrp { flex-wrap: nowrap !important; overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: thin; padding-bottom: 3px; -webkit-overflow-scrolling: touch; }
+  :root.v52 .lgrp > * { flex: none; }
+  :root.v52 .lgrp .lgl { width: auto !important; min-width: 0; margin-right: 4px !important; font-size: 10.5px !important; }
+  :root.v52 .lenstabs button { padding: 4px 9px !important; font-size: 13px !important; white-space: nowrap; }
+  :root.v52 .lensbar .lensq { margin-top: 8px !important; font-size: 13.5px; }
+  :root.v52 .v51mapcard .mapbox { height: min(70vh, 640px); }
+}
+@media (max-width: 899px) {
+  /* a soft edge says "swipe for more" on lens rows that run past the screen */
+  :root.v52 .lgrp { -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 28px), transparent); mask-image: linear-gradient(90deg, #000 calc(100% - 28px), transparent); padding-right: 24px; }
+  :root.v52 .lgrp[data-g="start"] { -webkit-mask-image: none; mask-image: none; }
+}
+@media (min-width: 560px) and (max-width: 899px) { :root.v52 .v51dock #stat { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; } }
+@media (max-width: 1199px) {
+  :root.v52 .v51mapcard .scen select { width: auto; max-width: 170px; }
+  :root.v52 .v51mapcard .find .v51seg { margin-left: auto; }
+}
+@media (max-width: 1199px) {
+  :root.v52 .v51mapcard .scen > label[for="scen"] { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  :root.v52 .v51mapcard .scen { gap: 4px 8px !important; }
+  :root.v52 .v51mapcard .scen label.acc2 { white-space: nowrap; }
+}
+@media (min-width: 900px) and (max-width: 1199px) {
+  :root.v52 .v51mapcard .find input { flex: 1 1 90px !important; }
+  :root.v52 .v51mapcard .find .v51seg { margin-left: 0 !important; }
+  :root.v52 .v51mapcard .bar2, :root.v52 .v51mapcard .scen, :root.v52 .v51mapcard .scen select { font-size: 12px !important; }
+  :root.v52 .v51mapcard .layers > summary { padding: 3px 9px !important; font-size: 12px !important; }
+}
+@media (max-width: 899px) { :root.v52 .lenstabs, :root.v52 .lensbar { min-width: 0; max-width: 100%; } :root.v52 .lgrp { min-width: 0; max-width: 100%; } }
+
+/* ---------- 14. header scene, second pass: tenements, water towers, storefronts, a moving 7 train and taxi ---------- */
+:root { --h-midsh:#6a8aa1;--h-wa:#ffe9a3;--h-wb:#ffc27a;--h-wc:#a6e3df;--h-wd:#ffb3c7;--h-brick:#b8634c;--h-bricksh:#9a4f3c;--h-brickwin:#7a3b2e;--h-sill:#e6c9b5;--h-cornice:#d9b8a0;--h-fe:#3a2a2a;--h-wt:#8a5a3a;--h-wt2:#6e452c;--h-wt3:#a8754f;--h-shop:#4a5a66;--h-shopdoor:#2e3a44;--h-awn3:#e07aa0;--h-awnw:#f5efe6;--h-sign:#f3d35a;--h-trainhi:#eef3f6;--h-trainsh:#9aa6ae;--h-wheel:#20242c;--h-taxi:#f4c430;--h-taxisign:#fff3b0;--h-taxiwin:#9fc6d8;--h-taxidark:#c79a12;--h-thsignl:#5b6b6a; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --h-midsh:#9a4f7c;--h-wa:#ffe08a;--h-wb:#ffab5e;--h-wc:#7fe0d6;--h-wd:#ff9ec0;--h-brick:#7e3a4c;--h-bricksh:#682e3f;--h-brickwin:#3c1d2c;--h-sill:#b3828d;--h-cornice:#a86a80;--h-fe:#140c18;--h-wt:#5e3a3a;--h-wt2:#45282c;--h-wt3:#77504c;--h-shop:#24203a;--h-shopdoor:#120f20;--h-awn3:#d0608a;--h-awnw:#e8d6e6;--h-sign:#ffd166;--h-trainhi:#c4c0dc;--h-trainsh:#6c6888;--h-wheel:#0b0b12;--h-taxi:#f2b81f;--h-taxisign:#fff1a8;--h-taxiwin:#5e6a99;--h-taxidark:#b0820b;--h-thsignl:#4a4f64; } }
+:root[data-theme="dark"] { --h-midsh:#9a4f7c;--h-wa:#ffe08a;--h-wb:#ffab5e;--h-wc:#7fe0d6;--h-wd:#ff9ec0;--h-brick:#7e3a4c;--h-bricksh:#682e3f;--h-brickwin:#3c1d2c;--h-sill:#b3828d;--h-cornice:#a86a80;--h-fe:#140c18;--h-wt:#5e3a3a;--h-wt2:#45282c;--h-wt3:#77504c;--h-shop:#24203a;--h-shopdoor:#120f20;--h-awn3:#d0608a;--h-awnw:#e8d6e6;--h-sign:#ffd166;--h-trainhi:#c4c0dc;--h-trainsh:#6c6888;--h-wheel:#0b0b12;--h-taxi:#f2b81f;--h-taxisign:#fff1a8;--h-taxiwin:#5e6a99;--h-taxidark:#b0820b;--h-thsignl:#4a4f64; }
+.h-midsh{fill:var(--h-midsh)}.h-wa{fill:var(--h-wa)}.h-wb{fill:var(--h-wb)}.h-wc{fill:var(--h-wc)}.h-wd{fill:var(--h-wd)}.h-brick{fill:var(--h-brick)}.h-bricksh{fill:var(--h-bricksh)}.h-brickwin{fill:var(--h-brickwin)}.h-sill{fill:var(--h-sill)}.h-cornice{fill:var(--h-cornice)}.h-fe{fill:var(--h-fe)}.h-wt{fill:var(--h-wt)}.h-wt2{fill:var(--h-wt2)}.h-wt3{fill:var(--h-wt3)}.h-shop{fill:var(--h-shop)}.h-shopdoor{fill:var(--h-shopdoor)}.h-awn3{fill:var(--h-awn3)}.h-awnw{fill:var(--h-awnw)}.h-sign{fill:var(--h-sign)}.h-trainhi{fill:var(--h-trainhi)}.h-trainsh{fill:var(--h-trainsh)}.h-wheel{fill:var(--h-wheel)}.h-taxi{fill:var(--h-taxi)}.h-taxisign{fill:var(--h-taxisign)}.h-taxiwin{fill:var(--h-taxiwin)}.h-taxidark{fill:var(--h-taxidark)}.h-thsignl{fill:var(--h-thsignl)}
+/* the train rolls along the viaduct and a taxi drives by; both stop with "Animate the header" off or reduced motion */
+.hero .v52scene .v52train { animation: v52train 16s linear infinite; }
+.hero .v52scene .v52taxi { animation: v52taxi 11s linear infinite; }
+@keyframes v52train { 0% { transform: translateX(-120px); } 72% { transform: translateX(250px); } 100% { transform: translateX(250px); } }
+@keyframes v52taxi { 0% { transform: translateX(250px); } 60% { transform: translateX(-20px); } 100% { transform: translateX(-20px); } }
+.still .hero .v52scene .v52train { animation: none; transform: translateX(60px); }
+.still .hero .v52scene .v52taxi { animation: none; transform: translateX(96px); }
+@media (prefers-reduced-motion: reduce) { .hero .v52scene .v52train { animation: none; transform: translateX(60px); } .hero .v52scene .v52taxi { animation: none; transform: translateX(96px); } }
+/* the stamp's sign at an exact 2x scale, so every pixel is the same size */
+.stamp .si svg.v52sign { width: 84px !important; height: 36px; image-rendering: pixelated; }
+@media (max-width: 700px) { .stamp .si svg.v52sign { width: 42px !important; height: 18px; } }
+
+:root { --h-stone:#c99a74; --h-stonesh:#ad7f5c; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --h-stone:#8e5a6a; --h-stonesh:#744857; } }
+:root[data-theme="dark"] { --h-stone:#8e5a6a; --h-stonesh:#744857; }
+.h-stone{fill:var(--h-stone)}.h-stonesh{fill:var(--h-stonesh)}
+

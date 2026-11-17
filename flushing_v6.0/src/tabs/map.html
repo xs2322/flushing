@@ -1,0 +1,131 @@
+<section id="tab-map">
+<div class="app">
+<aside class="rail">
+  <details class="step" id="step1" open><summary><span class="sn">1</span>Where are restrooms needed?</summary>
+    <div><label class="dl" for="dist">District</label><select id="dist"></select><p class="dhint">All 59 community districts. * has a Throne restroom.</p></div>
+    <p class="base">A <b>need tier</b> rates how badly a block needs a public restroom, from 1 to 5. Blocks within a 5-minute walk of an open restroom are <b>served</b>. Every other block takes its strongest reason: busy sidewalks, vulnerable residents, poverty or 311 reports. <a href="#faq" data-faq="q-tier">More on tiers</a></p>
+    <details class="sec sub"><summary>What sets the tier</summary><div id="letters"></div></details>
+    <details class="sec sub" id="thsec"><summary>Tier thresholds</summary>
+      <label class="row">Preset<select id="thpreset"><option value="dot">Default: calibrated to DOT's street classes</option><option value="equity">Equity first</option><option value="foot">Foot traffic first</option><option value="v3">Earlier subway cut-offs (20,000 / 50,000 / 100,000 a day)</option><option value="round">Round numbers (v5.3 default)</option><option value="custom">Custom</option></select></label>
+      <details class="edit"><summary>Edit thresholds</summary><table class="thtab"><thead><tr><th>Tier starts at</th><th>2</th><th>3</th><th>4</th><th>5</th></tr></thead><tbody>
+      <tr><td>Subway entries a day (thousands)</td><td>–</td><td><input id="thsub3" type="number" step="any" value="0" title="0 = any station"></td><td><input id="thsub4" type="number" step="any" value="7.143"></td><td><input id="thsub5" type="number" step="any" value="" placeholder="none"></td></tr>
+      <tr><td>Vulnerable residents %</td><td><input id="thvul2" type="number" step="1" value="24"></td><td><input id="thvul3" type="number" step="1" value="28"></td><td><input id="thvul4" type="number" step="1" value="37"></td><td><input id="thvul5" type="number" step="1" value="43"></td></tr>
+      <tr><td>Poverty %</td><td><input id="thpov2" type="number" step="0.5" value="8"></td><td><input id="thpov3" type="number" step="0.5" value="13"></td><td><input id="thpov4" type="number" step="0.5" value="28"></td><td><input id="thpov5" type="number" step="0.5" value="41"></td></tr>
+      <tr><td>Complaints a year</td><td><input id="thc2" type="number" step="any" value="0.3"></td><td><input id="thc3" type="number" step="any" value="0.5"></td><td><input id="thc4" type="number" step="any" value="1"></td><td><input id="thc5" type="number" step="any" value="2.5"></td></tr>
+      </tbody></table></details>
+      <p>Most people can leave this on the default. Foot traffic follows DOT's street classes (Global 5, Regional 4, Neighborhood 3, Community 2, Baseline 1). Subway follows DOT's own rule: a station within 150 m with more than 50,000 riders a <i>week</i> (about 7,100 a day) makes it Regional (4); any other station, Neighborhood (3). Subway entries are in thousands a day; blank means none. Our earlier daily cut-offs are kept as a preset. Resident and poverty cut-offs are round numbers, the same in every district (see <a href="#numbers" data-tab="numbers">Numbers</a>). "Equity first" lowers them; "Foot traffic first" caps them at tier 3. The 30-site list and the Throne check always use the default.</p>
+    </details>
+    <details class="sec sub"><summary>Walk and contract assumptions</summary>
+    <label class="row">Share of passers-by who need a restroom (%)<input id="rate" type="number" min="0.1" max="10" step="0.1" value="1"></label>
+    <label class="row">Uses one unit can serve per day<input id="cap" type="number" min="20" max="600" step="5" value="215"></label>
+    <label class="row">Yearly cost per unit ($)<input id="cost" type="number" min="10000" max="1000000" step="5000" value="235000"></label>
+    <label class="row">Walk standard (minutes)<input id="tmin" type="number" min="4" max="20" step="1" value="10"></label>
+    <label class="row">Walking speed (metres a minute)<input id="speed" type="number" min="40" max="90" step="1" value="64"></label>
+    <label class="row">Detour factor (walk ÷ straight line)<input id="det" type="number" min="1" max="2" step="0.05" value="1.45"></label>
+    <div id="extrasw"></div>
+    <div class="btnrow"><button class="rbtn" id="mobPre" type="button">Mobility-device preset: 50 m a minute, fully accessible restrooms only</button></div>
+    <p>The walk standard and speed decide who is served. The other three only estimate visits and cost for contracts; they do not change tiers. The share is an assumption until the city publishes Throne's New York use counts; the best public data are from Throne's Long Beach, California pilot, where the busiest unit averaged 119 uses a day. Cost is the Throne pilot: $4M for 17 units for a year, units and service together. Speed is 3.5 ft a second, the walking speed US signal timing uses (MUTCD 4E.06); a brisk adult is about 80. The detour factor turns a straight line into a street walk: routed walks on the city's streets average 1.45 times the straight line. Sources for every number: <a href="#numbers" data-tab="numbers">Numbers</a>.</p>
+  </details>
+    <details class="sec sub"><summary>Which restrooms count</summary>
+    <label class="rlrow">Restroom list<select id="rlist"></select></label>
+    <p class="small" id="rlistNote"></p>
+    <div class="btnrow"><button class="rbtn" id="rrPull">Update from NYC Open Data</button><label class="rbtn">Load a list file (CSV)<input type="file" id="rrFile" accept=".csv,text/csv" hidden></label><button class="rbtn" id="rrLog" hidden>Save the changes (CSV)</button><button class="rbtn" id="rrSave" hidden>Save this map with this list</button></div>
+    <p class="small" id="rrStat"></p>
+    <div class="chk" id="ops"></div>
+    <div id="opx"></div>
+    <div class="chk" style="margin-top:14px">
+      <label><input type="checkbox" id="acc"><span>Only count restrooms listed as fully wheelchair accessible</span></label>
+      <label><input type="checkbox" id="water"><span>Count restrooms on the far side of open water</span></label>
+    </div>
+    <p>Click any restroom on the map to stop counting it.</p>
+  </details>
+  </details>
+  <details class="step" id="step2" open><summary><span class="sn">2</span>Where can they go?</summary>
+    <p class="base">Choose the land a restroom may stand on. Land never changes a block's tier; it only decides where one is allowed. Each pick then gets a desk check of what the data can show.</p>
+    <div id="landbox"></div>
+  </details>
+  <details class="step" id="step3" open><summary><span class="sn">3</span>Where should they go?</summary>
+    <p class="base">The map places a restroom on the neediest allowed block, counts it as open, and repeats, so picks spread out. Each pick shows its site check and a suggested type of restroom.</p>
+    <div class="picks"><label for="npick">Sites</label><select id="npick"><option>1</option><option>2</option><option selected>3</option><option>4</option><option>5</option><option>8</option></select><button class="btn pri flush" id="pick">FLUSH!</button><button class="btn" id="clear" hidden>Clear</button></div>
+    <p class="base">To pick for a whole borough or the city, use the three-step picker on <a href="#shortlists" data-tab="shortlists">Shortlists</a>.</p>
+  </details>
+
+  <details class="sec" id="terms"><summary>Key terms</summary>
+    <dl class="defs">
+      <dt>Need tier</dt><dd>How badly a block needs a public restroom: 1 (least) to 5 (most). Four questions each give a rating from 1 to 5; the block takes the highest. Nothing is weighted or added. Served blocks get no tier.</dd>
+      <dt>Served · partly served · gap</dt><dd>Served: an open restroom within a 5-minute walk; not ranked. Partly served: 5 to 10 minutes; the tier is lowered by one. Gap: beyond 10 minutes.</dd>
+      <dt>Deciding factor</dt><dd>The one factor that set the block's tier. Ties between blocks go to more people on foot, then more residents.</dd>
+      <dt>Foot traffic</dt><dd>DOT's five street classes (Global, Regional, Neighborhood, Community, Baseline), or a subway station within 150 m with many daily entries.</dd>
+      <dt>Vulnerable residents</dt><dd>Share of residents aged 65+, under 5, or under 65 with a disability (Census survey). A block within 800 m of a homeless drop-in centre counts as at least tier 4, as its own reason, whoever lives there. Resident shares only count on blocks with 10 or more residents.</dd>
+      <dt>Poverty · complaints</dt><dd>Poverty rate (Census survey) and yearly 311 public-urination complaints within 200 m.</dd>
+      <dt>Walk</dt><dd>Straight-line distance × 1.45 for real streets, at 64 m a minute (3.5 ft a second, the walking speed traffic signals are timed for).</dd>
+      <dt>Clear path</dt><dd>The open sidewalk left beside a unit. DOT's Street Design Manual asks for 8 ft in front of an automatic toilet (6 ft 7 in wide) and 5 ft on its other sides, so a sidewalk unit needs about 15 ft, or about 20 ft if the 5 ft applies at the curb. The tool checks the widest sidewalk on the block, not the exact spot.</dd>
+      <dt>Lens</dt><dd>A view of the map for one question, such as coverage, zoning or flood risk. It never changes a tier; it adds layers and a results panel.</dd>
+      <dt>Service ring</dt><dd>A loop one cleaning crew drives, through several units and, where there is one, a Parks restroom as its base.</dd>
+      <dt>Desk review · site visit</dt><dd>The tool checks what public data can show. Sun, curb uses, below-grade structures and lighting need someone on site.</dd>
+      <dt>Visits a day</dt><dd>1% of people on foot, up to 215, for people with no restroom nearby. Used for cleaning schedules and cost, never for ranking.</dd>
+    </dl>
+    <p><a href="#faq" data-tab="faq">All key terms and common questions →</a></p>
+  </details>
+  <details class="sec" id="srcsec"><summary>Data and sources</summary>
+    <ul class="srcl">
+      <li><b>Restrooms:</b> NYC Public Restrooms (open data) and the 17 announced Throne units</li>
+      <li><b>Foot traffic:</b> DOT Pedestrian Mobility Plan street classes; MTA subway ridership</li>
+      <li><b>Residents:</b> 2020 Census blocks; Census survey (ACS) for age, disability and poverty</li>
+      <li><b>Complaints:</b> 311 service requests (public urination)</li>
+      <li><b>Land:</b> MapPLUTO tax lots, parks and plazas; sidewalk widths from city planimetrics</li>
+    </ul>
+    <p>Full list with links and dates: <a href="#sources" data-tab="sources">Sources</a>.</p>
+  </details>
+
+  <details class="sec" id="datasec"><summary>Districts and your own data</summary>
+    <h4>Build a custom area <span style="text-transform:none;letter-spacing:0;font-style:italic">needs internet</span></h4>
+    <select id="cdpick" aria-label="Community district to build" hidden></select>
+    <div class="btnrow"><button class="rbtn" id="bbuild" hidden>Build this district</button><label class="rbtn" for="fbound">Use a boundary file…</label><input class="file" type="file" id="fbound" accept=".geojson,.json,.shp"></div>
+    <div id="shapebox" hidden><select id="shapepick" aria-label="Shape in the file" style="margin-top:8px"></select><div class="btnrow"><button class="rbtn" id="bshape">Build this shape</button></div></div>
+    <div id="bstat" role="status" aria-live="polite"></div>
+    <p>Every community district is built in. A boundary file of your own (GeoJSON or .shp), such as a BID or a council district, builds a custom area in under a minute; it is kept in this browser. Custom areas have no sidewalk widths.</p>
+    <h4>Add restrooms</h4>
+    <div class="btnrow"><button class="rbtn" id="badd" aria-pressed="false">Click the map to add</button><label class="rbtn" for="frest">Import points…</label><input class="file" type="file" id="frest" accept=".csv,.geojson,.json"></div>
+    <p>Import a CSV with latitude and longitude columns, or GeoJSON points.</p>
+    <h4>Save</h4>
+    <div class="btnrow"><button class="rbtn" id="xcsv">Block results (CSV)</button><button class="rbtn" id="xgeo">Block results (GeoJSON)</button><button class="rbtn" id="xpack">District pack</button><button class="rbtn" id="xtool">This tool, with my districts</button></div>
+    <h4>Update</h4>
+    <div class="btnrow"><button class="rbtn" id="brest">Refresh restrooms</button></div>
+    <p>Pulls the current Public Restrooms list for this district. Needs internet.</p>
+    <div class="btnrow"><label class="rbtn" for="fpack">Load a district pack…</label><input class="file" type="file" id="fpack" accept=".json"><button class="rbtn" id="bdrop" hidden>Remove this district</button></div>
+    <p>Results open in QGIS, ArcGIS or Excel. "This tool, with my districts" downloads a copy of this page with everything you added inside it.</p>
+  </details>
+</aside>
+
+<div class="main">
+  <div class="guide story" id="guide" role="region" aria-label="One-minute story"></div>
+  <button class="btn sopen" id="sopen" hidden>Take the one-minute story</button>
+  <div class="card"><div id="headline"></div><p class="dsum" id="dsum" aria-live="polite"></p><div class="stat" id="stat"></div></div>
+  <div class="card">
+    <div class="lensbar" id="lensbar"></div>
+    <div class="find"><input id="q" type="search" placeholder="Search an address or place in NYC" aria-label="Search an address or place"><button class="btn" id="qgo">Find</button><button class="btn" id="qme">Use my location</button></div>
+    <p class="small" id="qmsg" role="status" aria-live="polite"></p>
+    <div class="bar2">
+      <div class="seg" role="group" aria-label="Map view"><button id="vNeed" aria-pressed="true">Need tier</button><button id="vAccess" aria-pressed="false">Walk time</button></div>
+      <div class="scen"><label for="scen">Scenario</label><select id="scen"><option value="peak">Peak (default)</option><option value="win">Winter</option><option value="eve">Evening</option></select><label class="acc2"><input type="checkbox" id="acc2">Accessible restrooms only</label><label class="acc2" title="Rank blocks by residents only: vulnerable residents, poverty and complaints. Foot traffic is switched off."><input type="checkbox" id="resOnly">Residents only</label></div><details class="layers" id="laydd"><summary>Layers</summary><div class="laylist" role="group" aria-label="Map layers">
+      <label><input type="checkbox" id="lyS" checked>Street names</label>
+      <label><input type="checkbox" id="lyP" checked>Parks, plazas and stations</label>
+      <label><input type="checkbox" id="lyF">Flood plain</label>
+    </div></details>
+      
+    </div>
+    
+    <div class="mapbox" id="mapbox"><svg id="map" role="img" aria-label="Census blocks of the selected district shaded by the selected view"></svg>
+      <div class="zoom"><button id="zin" aria-label="Zoom in">+</button><button id="zout" aria-label="Zoom out">−</button><button id="zfit" aria-label="Show whole district" title="Show whole district">⤢</button></div>
+      <div class="hint" id="hint" hidden>Click where the restroom is. Press "Click the map to add" again when done.</div>
+      <div class="tip" id="tip" hidden></div></div>
+    <div class="legend" id="legend"></div>
+  </div>
+  <div class="card" id="lens" hidden></div>
+  <div class="card" id="detail"></div>
+  <div class="card" id="picks" hidden></div>
+  <div class="note"><b>Read tiers as a starting point.</b> They are estimates from public data. Every site needs a visit and agency approval before anything is built. <a href="#method" data-tab="method">How tiers are set</a>.</div>
+</div>
+</div>
+</section>
