@@ -1,4 +1,0 @@
-/* v5.3b: thresholds typed out of order */
-.v53bwarn { margin: 6px 0 0; padding: 6px 9px; border-left: 4px solid var(--rag-mid, #b8860b); background: var(--rag-mid-bg, rgba(184, 134, 11, 0.1)); }
-table.thtab input.v53bbad { outline: 2px solid var(--rag-mid, #b8860b); outline-offset: -1px; }
-
