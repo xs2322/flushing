@@ -1,0 +1,119 @@
+/* ================= v5.1: public pop-up layer =================
+   Loaded after every earlier style block, so these rules win.
+   Sections: header · map summary card · tooltips · help links · shortlists picker · list page ·
+   FAQ page · About cards · Display options (colour sets, large text) · phone width. */
+
+/* ---- header: say what it is first ---- */
+.titlecard .kick { margin: 6px 0 2px; font-weight: 700; font-size: 15px; letter-spacing: .01em; color: var(--accent); }
+.titlecard .sub { max-width: 62ch; }
+.titlecard .sub .hw { white-space: nowrap; font-weight: 650; }
+.acro .acl { background: none !important; border: 0 !important; box-shadow: none !important; padding-left: 0 !important; color: var(--muted); font-weight: 600; }
+.acro .acl::before { display: none !important; }
+
+/* ---- map summary: a small fact card instead of one long sentence ---- */
+.v51sum { margin: 2px 0 6px; }
+.v51sum .v51h { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; margin-bottom: 8px; }
+.v51sum .v51h b { font-size: 17px; }
+.v51sum .v51h span { color: var(--muted); font-size: 14px; }
+.v51facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 8px; margin: 0; }
+.v51facts > div { border: 1px solid var(--line); border-radius: 10px; padding: 9px 12px; background: var(--panel); }
+.v51facts dt { font-size: 12px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); font-weight: 700; margin-bottom: 3px; display: flex; align-items: center; gap: 6px; }
+.v51facts dd { margin: 0; font-size: 14.5px; line-height: 1.4; }
+.v51facts dd .gpill { font-size: 12px; padding: 1px 7px; border-radius: 999px; font-weight: 700; }
+
+/* ---- help links: a small round "?" that opens the FAQ at the right question ---- */
+a.qm { display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid currentColor; color: var(--accent); font-size: 11.5px; font-weight: 800; text-decoration: none; line-height: 1; flex: none; text-transform: none; letter-spacing: 0; vertical-align: middle; margin-left: 2px; }
+a.qm:hover, a.qm:focus-visible { background: var(--accent); color: var(--act-ink); }
+
+/* ---- hover card for restroom dots ---- */
+.tip.rtip { max-width: 300px; white-space: normal; line-height: 1.35; padding: 9px 11px; }
+.tip.rtip b { display: block; font-size: 14px; margin-bottom: 2px; }
+.tip.rtip .rt-m { color: var(--muted); font-size: 12.5px; }
+.tip.rtip .rt-c { margin-top: 5px; font-weight: 650; font-size: 13px; }
+.tip.rtip .rt-c.no { color: var(--no); }
+.tip.rtip .rt-h { margin-top: 4px; font-size: 11.5px; color: var(--muted); }
+#map .mk.v51far { opacity: .42; }
+
+/* ---- Shortlists: the three-step picker ---- */
+.qp { border: 2px solid var(--ink); border-radius: 14px; padding: 16px 18px; margin: 14px 0 6px; background: var(--panel); box-shadow: 0 4px 0 var(--hard, var(--ink)); }
+.qp h3 { margin: 0 0 8px; font-size: 16px; }
+.qps { display: grid; grid-template-columns: 34px 1fr; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--line); }
+.qps:last-of-type { border-bottom: 0; }
+.qpn { width: 30px; height: 30px; border-radius: 50%; background: var(--accent); color: var(--act-ink); display: inline-flex; align-items: center; justify-content: center; font-weight: 800; }
+.qp select { font-size: 15px; padding: 7px 10px; min-width: 260px; max-width: 100%; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chips button { border: 2px solid var(--line); background: var(--panel); color: var(--ink); border-radius: 12px; padding: 8px 12px; font: inherit; font-weight: 650; cursor: pointer; text-align: left; display: flex; flex-direction: column; gap: 2px; min-width: 64px; }
+.chips button small { font-weight: 400; color: var(--muted); font-size: 12.5px; }
+.chips button[aria-pressed="true"] { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 12%, var(--panel)); box-shadow: inset 0 0 0 1px var(--accent); }
+.chips button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.qpck { display: flex; gap: 8px; align-items: center; margin-top: 10px; font-weight: 600; }
+.qpgo { padding-top: 12px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+.btn.big { font-size: 16px !important; padding: 11px 20px !important; }
+.qpres { margin: 14px 0 4px; }
+.qpres ol.qpl { list-style: none; padding: 0; margin: 10px 0; display: grid; gap: 8px; }
+.qpres ol.qpl li { display: grid; grid-template-columns: 34px 1fr auto; gap: 10px; align-items: center; border: 1px solid var(--line); border-radius: 10px; padding: 9px 12px; }
+.qpres .qpk { width: 28px; height: 28px; border-radius: 50%; background: var(--pick); color: var(--panel); display: inline-flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px; }
+.qpres .qpm { color: var(--muted); font-size: 13px; }
+.qpres .gpill { font-size: 12px; padding: 1px 7px; border-radius: 999px; font-weight: 700; }
+
+/* ---- Shortlists: the other lists as cards that open and close ---- */
+details.slc { border: 1px solid var(--line); border-radius: 12px; padding: 0 14px; margin: 10px 0; background: var(--panel); }
+details.slc > summary { cursor: pointer; padding: 13px 0; list-style: none; display: grid; grid-template-columns: 1fr auto; gap: 2px 12px; }
+details.slc > summary::-webkit-details-marker { display: none; }
+details.slc > summary b { font-size: 15.5px; }
+details.slc > summary span { grid-column: 1; color: var(--muted); font-size: 14px; }
+details.slc > summary::after { content: "Open ▾"; grid-row: 1 / span 2; grid-column: 2; align-self: center; font-weight: 700; font-size: 13px; color: var(--accent); }
+details.slc[open] > summary::after { content: "Close ▴"; }
+details.slc[open] { padding-bottom: 12px; }
+
+/* ---- Restrooms page ---- */
+.v51why { color: var(--muted); font-size: 12.5px; display: block; }
+.v51exp { border-left: 4px solid var(--accent); padding: 8px 12px; background: color-mix(in srgb, var(--accent) 7%, var(--panel)); border-radius: 0 8px 8px 0; max-width: 90ch; }
+#lsDist { max-width: 260px; }
+
+/* ---- FAQ and About ---- */
+.faq details { border-bottom: 1px solid var(--line); padding: 4px 0; }
+.faq details > summary { cursor: pointer; font-weight: 700; font-size: 16px; padding: 9px 0; }
+.faq details > div { padding: 0 0 10px; max-width: 72ch; }
+.faq details > div p { margin: 0 0 8px; }
+.faq details[open] > summary { color: var(--accent); }
+.faq details.hit { background: color-mix(in srgb, var(--accent) 8%, transparent); border-radius: 8px; padding: 4px 8px; }
+.v51cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin: 14px 0; }
+.v51cards > div { border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; background: var(--panel); }
+.v51cards h3 { margin: 0 0 6px; font-size: 16px; }
+.v51cards p { margin: 0; }
+.doc p, .doc li { max-width: 74ch; }
+h2.v51and { border-top: 2px solid var(--line); padding-top: 18px; margin-top: 30px; }
+
+/* ---- Display: colour sets (all checked for colour-blind contrast) ---- */
+:root[data-palette="blue"] { --g0: #f4f6f7; --g1: #c7e9b4; --g2: #7fcdbb; --g3: #41b6c4; --g4: #2c7fb8; --g5: #253494; --yes: #c7e9b4; --mid: #41b6c4; --no: #253494; }
+:root[data-palette="grey"] { --g0: #ffffff; --g1: #d9d9d9; --g2: #bdbdbd; --g3: #969696; --g4: #636363; --g5: #252525; --yes: #e5e5e5; --mid: #9a9a9a; --no: #303030; --park: #3a3a3a; --throne: #000; --sub: #444; --dropin: #555; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"])[data-palette="blue"] { --g0: #26323b; --g1: #1e3a5f; --g2: #22608f; --g3: #2a8fb0; --g4: #5cc0b5; --g5: #c7e9b4; --yes: #1e3a5f; --mid: #2a8fb0; --no: #c7e9b4; }
+  :root:not([data-theme="light"])[data-palette="grey"] { --g0: #26323b; --g1: #3d3d3d; --g2: #5e5e5e; --g3: #8a8a8a; --g4: #b8b8b8; --g5: #ececec; --yes: #3d3d3d; --mid: #8a8a8a; --no: #ececec; --park: #cfcfcf; --throne: #fff; --sub: #ddd; --dropin: #bbb; }
+}
+:root[data-theme="dark"][data-palette="blue"] { --g0: #26323b; --g1: #1e3a5f; --g2: #22608f; --g3: #2a8fb0; --g4: #5cc0b5; --g5: #c7e9b4; --yes: #1e3a5f; --mid: #2a8fb0; --no: #c7e9b4; }
+:root[data-theme="dark"][data-palette="grey"] { --g0: #26323b; --g1: #3d3d3d; --g2: #5e5e5e; --g3: #8a8a8a; --g4: #b8b8b8; --g5: #ececec; --yes: #3d3d3d; --mid: #8a8a8a; --no: #ececec; --park: #cfcfcf; --throne: #fff; --sub: #ddd; --dropin: #bbb; }
+.dmenu fieldset + fieldset { margin-top: 8px; }
+.dmenu .dnote { font-size: 12px; color: var(--muted); margin: 4px 0 0; max-width: 30ch; }
+
+/* ---- Display: large text, for a screen at a pop-up ---- */
+:root.big body { font-size: 18px; }
+:root.big .doc p, :root.big .doc li, :root.big .rail p, :root.big .rail label, :root.big .rail summary, :root.big td, :root.big th, :root.big .v51facts dd, :root.big .lensq, :root.big .legend, :root.big .stat span, :root.big .detail, :root.big #detail p { font-size: 17px !important; }
+:root.big .small, :root.big .v51why, :root.big .chips button small { font-size: 15px !important; }
+:root.big nav a, :root.big .more > summary, :root.big .btn, :root.big .rbtn, :root.big .lenstabs button, :root.big select, :root.big input { font-size: 16px !important; }
+:root.big .stat b { font-size: 40px; }
+
+/* ---- phone width ---- */
+@media (max-width: 640px) {
+  .qp { padding: 12px; }
+  .qps { grid-template-columns: 28px 1fr; gap: 8px; }
+  .qp select { min-width: 0; width: 100%; }
+  .qpres ol.qpl li { grid-template-columns: 30px 1fr; }
+  .qpres ol.qpl li > :last-child { grid-column: 2; }
+  .titlecard .sub .hw { white-space: normal; }
+}
+#dsum { max-width: none; }
+#qpOut { margin-bottom: 26px; }
+.ltab td:last-child { min-width: 170px; }
+
